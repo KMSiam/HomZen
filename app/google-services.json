@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357481297035",
+    "project_id": "homzen-siam",
+    "storage_bucket": "homzen-siam.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357481297035:android:96e09f05876979d99a108e",
+        "android_client_info": {
+          "package_name": "com.kmsiam.seu.isd.lab.project.homzen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVOTm8DXucCwYreAdz16GNNorHB13IuxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

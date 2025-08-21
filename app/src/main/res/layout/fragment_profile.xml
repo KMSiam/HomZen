@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.ProfileFragment">
+
+    <!-- Guest View -->
+    <LinearLayout
+        android:padding="40dp"
+        android:visibility="gone"
+        android:id="@+id/guestView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="Profile Icon"
+            android:src="@drawable/ic_profile_placeholder"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enjoy browsing as guest!"
+            android:textSize="18sp"
+            android:textColor="@color/teal_700"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login to access your profile"
+            android:textSize="14sp"
+            android:textColor="@color/teal_200"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login/Signup"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="@color/lavender"
+            android:textColor="@android:color/white"
+            app:cornerRadius="16dp"/>
+    </LinearLayout>
+
+    <!-- Logged-in View -->
+    <ScrollView
+        android:visibility="visible"
+        android:id="@+id/loggedInView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Profile Header -->
+            <LinearLayout
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/bg_rounded_elevated"
+                android:elevation="2dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="5dp">
+                    <ImageView
+                        android:id="@+id/userProfilePic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="User Profile Picture"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile_placeholder"/>
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btnEditProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center"
+                        android:contentDescription="profile picture edit button"
+                        app:srcCompat="@drawable/ic_edit_profile"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:padding="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="20sp"
+                        android:textColor="@color/teal_700"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvUserEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="example@gmail.com"
+                        android:textSize="16sp"
+                        android:textColor="@color/teal_200"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Menu Items -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_rounded_elevated"
+                android:elevation="2dp">
+
+                <!-- My Orders -->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnOrders"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Orders Icon"
+                        android:src="@drawable/ic_orders"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700"  />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="My Orders"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+
+                <View style="@style/Divider"/>
+
+                <!-- Address -->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Address Icon"
+                        android:src="@drawable/ic_address"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700"  />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Address"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+
+                <View style="@style/Divider"/>
+
+                <!-- Payment Method -->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Payment Icon"
+                        android:src="@drawable/ic_payment"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700"  />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Payment Method"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+
+                <View style="@style/Divider"/>
+
+                <!--Purchase History-->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="History Icon"
+                        android:src="@drawable/ic_history"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Purchase History"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+
+                <View style="@style/Divider"/>
+
+                <!-- Settings-->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Settings Icon"
+                        android:src="@drawable/ic_settings"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700"  />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Settings"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+
+                <View style="@style/Divider"/>
+
+                <!-- Share App -->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Share Icon"
+                        android:src="@drawable/ic_share"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700"  />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Share App"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+
+                <View style="@style/Divider"/>
+
+                <!-- Logout -->
+                <LinearLayout
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Logout Icon"
+                        android:src="@drawable/ic_logout"
+                        android:layout_marginEnd="16dp"
+                        app:tint="@color/teal_700" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="LogOut"
+                        android:textSize="16sp"
+                        android:textColor="#212121"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Arrow Right"
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="#757575" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
