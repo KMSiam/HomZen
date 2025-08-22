@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" /> <!-- For Android 13+ -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_IMAGES"
         tools:ignore="SelectedPhotoAccess" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -22,17 +22,19 @@
         android:roundIcon="@drawable/ic_app_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.HomZen">
+        <activity
+            android:name=".Activity.ServiceDetailActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDa9gDviPIwJ8hRc9cusIEZ1V1Q0BwiGb0"/> <!-- https://console.cloud.google.com/google/maps-apis/home;onboard=true?project=homzen -->
-
+            android:value="AIzaSyDa9gDviPIwJ8hRc9cusIEZ1V1Q0BwiGb0" /> <!-- https://console.cloud.google.com/google/maps-apis/home;onboard=true?project=homzen -->
         <activity
             android:name=".Activity.LoginActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".Activity.SignupActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".Activity.SplashActivity"
             android:exported="true">

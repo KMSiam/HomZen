@@ -33,5 +33,11 @@
         <item name="colorOnSurface">@color/black</item>
     </style>
 
+    <style name="FilterChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipStrokeColor">#3F51B5</item>
+        <item name="chipBackgroundColor">@android:color/white</item>
+        <item name="chipStrokeWidth">2dp</item>
+    </style>
+
     <style name="Theme.HomZen" parent="Base.Theme.HomZen" />
 </resources>

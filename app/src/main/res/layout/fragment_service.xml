@@ -1,14 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.ServiceFragment">
+    tools:context=".Fragment.ServiceFragment"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="#F8F8F8">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Search Bar -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchViewService"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Service" />
+        android:layout_height="wrap_content"
+        android:queryHint="Search services..."
+        android:iconifiedByDefault="false"
+        android:background="@android:color/white"
+        android:padding="4dp" />
 
-</FrameLayout>
+    <!-- Category Chips -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/categoryContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <!-- Example category chips -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FilterChipStyle"
+                android:text="All" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipBathroom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FilterChipStyle"
+                android:text="Bathroom" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipKitchen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FilterChipStyle"
+                android:text="Kitchen" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFloor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FilterChipStyle"
+                android:text="Floor" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipWindow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FilterChipStyle"
+                android:text="Window" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- RecyclerView for services -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerServices"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
