@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,6 +10,7 @@
     card_view:cardElevation="4dp">
 
     <LinearLayout
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -31,6 +34,7 @@
                 android:id="@+id/txtServiceName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:text="Service Name"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -48,6 +52,8 @@
                 android:id="@+id/txtServiceDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:text="Short description..."
                 android:textSize="12sp"
                 android:layout_marginTop="2dp" />

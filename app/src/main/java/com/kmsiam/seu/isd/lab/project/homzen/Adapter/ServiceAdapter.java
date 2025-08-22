@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder> implements Filterable {
-
+    private int lastPosition = -1;
     private Context context;
     private List<Service> serviceList;
     private List<Service> serviceListFull;
@@ -53,13 +55,25 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         // Load image using Glide
         Glide.with(context)
                 .load(service.getImageUrl())
-                .placeholder(R.drawable.ic_launcher_foreground) // Optional placeholder
-                .error(R.drawable.ic_launcher_foreground) // Optional error image
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_launcher_foreground)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.imgService);
 
         holder.itemView.setOnClickListener(v -> navigateToDetail(service));
         holder.btnNext.setOnClickListener(v -> navigateToDetail(service));
+
+        // Add this ONE line for animation
+        setSlideInAnimation(holder.itemView, position);
+    }
+
+    // Add this ONE method
+    private void setSlideInAnimation(View view, int position) {
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.item_slide_in_bottom);
+            view.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     private void navigateToDetail(Service service) {
