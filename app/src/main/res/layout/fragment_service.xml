@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
+            android:layout_marginTop="8dp"
             android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,9 +25,8 @@
                 android:id="@+id/searchViewService"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="@color/card_stroke"
                 android:background="@drawable/lavender_border"
                 android:queryHint="What service are you looking for?"
                 android:iconifiedByDefault="false"

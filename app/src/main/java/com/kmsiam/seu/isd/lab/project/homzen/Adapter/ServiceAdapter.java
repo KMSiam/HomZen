@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder> implements Filterable {
-    private int lastPosition = -1;
-    private Context context;
-    private List<Service> serviceList;
-    private List<Service> serviceListFull;
+    int lastPosition = -1;
+    Context context;
+    List<Service> serviceList;
+    List<Service> serviceListFull;
 
     public ServiceAdapter(Context context, List<Service> serviceList) {
         this.context = context;

@@ -1,8 +1,12 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +36,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
         TextView txtProviderRating = findViewById(R.id.txtProviderRating);
         TextView txtProviderDesc = findViewById(R.id.txtProviderDesc);
         TextView txtProviderPhone = findViewById(R.id.txtProviderPhone);
+        LinearLayout btnProviderPhone = findViewById(R.id.btnProviderPhone);
         TextView txtProviderEmail = findViewById(R.id.txtProviderEmail);
+        LinearLayout btnProviderEmail = findViewById(R.id.btnProviderEmail);
 
         // Get service data from intent
         String name = getIntent().getStringExtra("name");
@@ -58,8 +64,29 @@ public class ServiceDetailActivity extends AppCompatActivity {
         txtProviderName.setText("CleanPro Services");
         txtProviderRating.setText("⭐ 4.8 (120 reviews)");
         txtProviderDesc.setText("Professional cleaning service with 5+ years of experience.");
-        txtProviderPhone.setText("+880 1712 345678");
+        txtProviderPhone.setText("+880 1785 954300");
+        btnProviderPhone.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent iPhone = new Intent(Intent.ACTION_DIAL);
+                iPhone.setData(Uri.parse("tel:" + txtProviderPhone.getText().toString().trim()));
+                startActivity(iPhone);
+                return true;
+            }
+        });
         txtProviderEmail.setText("contact@cleanpro.com");
+        btnProviderEmail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent iEmail = new Intent(Intent.ACTION_SEND);
+                iEmail.setType("message/rfc822");
+                iEmail.putExtra(Intent.EXTRA_EMAIL, new String[]{txtProviderEmail.getText().toString().trim()});
+                iEmail.putExtra(Intent.EXTRA_SUBJECT, "Need more info about "+ txtTitle.getText().toString().trim());
+                iEmail.putExtra(Intent.EXTRA_TEXT, "Body of the email");
+                startActivity(Intent.createChooser(iEmail, "Choose an Email client"));
+                return true;
+            }
+        });
 
         // Load provider image (replace with actual provider image URL)
         Glide.with(this)
@@ -70,7 +97,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
                 .into(imgProvider);
 
         // Back button
-        topAppBar.setNavigationOnClickListener(v -> onBackPressed());
+        topAppBar.setNavigationOnClickListener(v -> {
+            getOnBackPressedDispatcher().onBackPressed();
+        });
 
         btnContinue.setOnClickListener(v -> {
             // later add booking code or firebase request

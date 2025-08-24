@@ -20,5 +20,5 @@ public class Service {
     public String getCategory() { return category; }
     public String getPrice() { return price; }
     public String getDescription() { return description; }
-    public String getImageUrl() { return imageUrl; } // Updated getter
+    public String getImageUrl() { return imageUrl; }
 }

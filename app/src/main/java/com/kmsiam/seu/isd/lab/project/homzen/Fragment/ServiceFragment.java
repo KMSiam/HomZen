@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceFragment extends Fragment {
-    private RecyclerView recyclerServices;
-    private ServiceAdapter adapter;
-    private List<Service> serviceList;
-    private SearchView searchView;
-    private Chip chipAll, chipBathroom, chipKitchen, chipFloor, chipWindow;
-    private View rootView;
+    RecyclerView recyclerServices;
+    ServiceAdapter adapter;
+    List<Service> serviceList;
+    SearchView searchView;
+    Chip chipAll, chipBathroom, chipKitchen, chipFloor, chipWindow;
+    View rootView;
 
     @Nullable
     @Override
@@ -108,7 +108,7 @@ public class ServiceFragment extends Fragment {
         chipFloor.setOnClickListener(chipClickListener);
         chipWindow.setOnClickListener(chipClickListener);
 
-        // Optional: Clear all when clicking category container area
+        //Clear all when clicking category container area
         rootView.findViewById(R.id.categoryContainer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +140,7 @@ public class ServiceFragment extends Fragment {
 
     private void loadDummyServices() {
         // Use actual image URLs instead of drawable resources
-        serviceList.add(new Service("Premium Bathroom Cleaning", "Bathroom", "1900", "Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom", "https://cdn.pixabay.com/photo/2014/12/17/16/54/clean-571679_1280.jpg"));
+        serviceList.add(new Service("Premium Bathroom Cleaning", "Bathroom", "1900", "Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom. Deep cleaning for bathroom", "https://cdn.pixabay.com/photo/2014/12/17/16/54/clean-571679_1280.jpg"));
         serviceList.add(new Service("Kitchen Regular Cleaning", "Kitchen", "699", "Basic regular cleaning for kitchen", "https://cdn.pixabay.com/photo/2020/08/10/06/52/cleaning-5476953_960_720.jpg"));
         serviceList.add(new Service("Floor Deep Cleaning", "Floor", "2800", "Complete floor deep cleaning", "https://cdn.pixabay.com/photo/2014/02/17/13/34/cleaning-268126_960_720.jpg"));
         serviceList.add(new Service("Full Window Cleaning", "Window", "1000", "Cleaning for standard windows", "https://cdn.pixabay.com/photo/2019/06/10/12/15/building-cleaner-4264144_960_720.jpg"));

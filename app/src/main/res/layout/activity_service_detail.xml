@@ -199,6 +199,7 @@
                         android:paddingEnd="16dp">
 
                         <LinearLayout
+                            android:id="@+id/btnProviderPhone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
@@ -222,6 +223,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/btnProviderEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
