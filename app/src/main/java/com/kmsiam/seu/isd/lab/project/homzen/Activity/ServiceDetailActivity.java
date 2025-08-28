@@ -44,7 +44,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         String name = getIntent().getStringExtra("name");
         String price = getIntent().getStringExtra("price");
         String desc = getIntent().getStringExtra("desc");
-        String imageUrl = getIntent().getStringExtra("imageUrl");
+        int imageResId = getIntent().getIntExtra("imageResId", R.drawable.ic_launcher_foreground);
 
         // Set service values
         topAppBar.setTitle(name);
@@ -52,13 +52,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
         txtPrice.setText("Starts from " + price);
         txtDesc.setText(desc);
 
-        // Load service image
-        Glide.with(this)
-                .load(imageUrl)
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .error(R.drawable.ic_launcher_foreground)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgService);
+        // Load service image from drawable resource
+        imgService.setImageResource(imageResId);
 
         // Set provider data (you can get this from intent or database later)
         txtProviderName.setText("CleanPro Services");
@@ -88,13 +83,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Load provider image (replace with actual provider image URL)
-        Glide.with(this)
-                .load("https://cdn.pixabay.com/photo/2016/07/20/23/31/girl-1531575_1280.jpg")
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .error(R.drawable.ic_launcher_foreground)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgProvider);
+        // Load provider image from drawable resource
+        imgProvider.setImageResource(R.drawable.service_probider);
 
         // Back button
         topAppBar.setNavigationOnClickListener(v -> {

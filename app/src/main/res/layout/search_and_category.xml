@@ -18,17 +18,13 @@
             android:orientation="vertical">
             <!-- Search Bar -->
             <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchViewService"
+                android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
-                android:layout_marginTop="8dp"
                 android:background="@drawable/lavender_border"
-                android:queryHint="What service are you looking for?"
-                android:iconifiedByDefault="false"
+                app:queryHint="What are you looking for?"
                 app:iconifiedByDefault="false"
-                app:queryBackground="@android:color/transparent"
-                app:searchHintIcon="@null"
                 app:searchIcon="@drawable/ic_search"
                 app:closeIcon="@drawable/ic_close" />
 
@@ -36,15 +32,13 @@
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:scrollbars="none">
 
                 <LinearLayout
                     android:id="@+id/categoryContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
+                    android:orientation="horizontal">
 
                     <!-- Example category chips -->
                     <com.google.android.material.chip.Chip
@@ -59,7 +53,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip2" />
+                        android:text="Chip" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip3"
@@ -67,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip3" />
+                        android:text="Chip" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip4"
@@ -75,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip4" />
+                        android:text="Chip" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip5"
@@ -83,46 +77,45 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip5" />
+                        android:text="Chip" />
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip6" />
+                        android:text="Chip" />
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip7" />
+                        android:text="Chip" />
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip8" />
+                        android:text="Chip" />
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip9"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip9" />
+                        android:text="Chip" />
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         style="@style/FilterChipStyle"
-                        android:text="Chip10" />
+                        android:text="Chip" />
 
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
 </LinearLayout>

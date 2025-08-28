@@ -52,13 +52,8 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         holder.txtServicePrice.setText("৳" + service.getPrice());
         holder.txtServiceDesc.setText(service.getDescription());
 
-        // Load image using Glide
-        Glide.with(context)
-                .load(service.getImageUrl())
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .error(R.drawable.ic_launcher_foreground)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.imgService);
+        // Load image from drawable resource
+        holder.imgService.setImageResource(service.getImageResId());
 
         holder.itemView.setOnClickListener(v -> navigateToDetail(service));
         holder.btnNext.setOnClickListener(v -> navigateToDetail(service));
@@ -81,7 +76,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         intent.putExtra("name", service.getName());
         intent.putExtra("price", "৳" + service.getPrice());
         intent.putExtra("desc", service.getDescription());
-        intent.putExtra("imageUrl", service.getImageUrl()); // Pass URL instead of resource ID
+        intent.putExtra("imageResId", service.getImageResId()); // Pass drawable resource ID
         context.startActivity(intent);
     }
 

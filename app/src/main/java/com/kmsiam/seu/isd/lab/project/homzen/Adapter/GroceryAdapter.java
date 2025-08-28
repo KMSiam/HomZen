@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,15 +19,63 @@ import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHolder> {
+public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHolder> implements Filterable {
 
     Context context;
     ArrayList<Grocery> arrGrocery;
-    public GroceryAdapter(Context context, ArrayList<Grocery> arrGrocery){
+    public GroceryAdapter(Context context, ArrayList<Grocery> arrGrocery) {
         this.context = context;
         this.arrGrocery = arrGrocery;
+        this.arrGroceryFull = new ArrayList<>(arrGrocery);
     }
+    private List<Grocery> arrGroceryFull;
+    
+    public void setFilteredList(ArrayList<Grocery> filteredList) {
+        this.arrGrocery = new ArrayList<>(filteredList);
+        this.arrGroceryFull = new ArrayList<>(filteredList);
+        notifyDataSetChanged();
+    }
+    
+    @Override
+    public Filter getFilter() {
+        return groceryFilter;
+    }
+    
+    private Filter groceryFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Grocery> filteredList = new ArrayList<>();
+            
+            if (constraint == null || constraint.length() == 0) {
+                // If search is empty, show all groceries
+                filteredList.addAll(arrGroceryFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                
+                for (Grocery item : arrGroceryFull) {
+                    // Search in both name and category (case insensitive)
+                    if (item.getName().toLowerCase().contains(filterPattern) ||
+                        item.getCategory().toLowerCase().contains(filterPattern) ||
+                        item.getType().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            arrGrocery.clear();
+            arrGrocery.addAll((List<Grocery>) results.values);
+            notifyDataSetChanged(); // This refreshes the RecyclerView
+        }
+    };
 
     @NonNull
     @Override
