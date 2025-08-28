@@ -1,5 +1,7 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
+import static android.view.View.VISIBLE;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +39,18 @@ public class ServiceFragment extends Fragment {
         recyclerServices = rootView.findViewById(R.id.recyclerServices);
         searchView = rootView.findViewById(R.id.searchViewService);
         chipAll = rootView.findViewById(R.id.chipAll);
-        chipBathroom = rootView.findViewById(R.id.chipBathroom);
-        chipKitchen = rootView.findViewById(R.id.chipKitchen);
-        chipFloor = rootView.findViewById(R.id.chipFloor);
-        chipWindow = rootView.findViewById(R.id.chipWindow);
+        chipBathroom = rootView.findViewById(R.id.chip2);
+        chipBathroom.setText("Bathroom");
+        chipBathroom.setVisibility(VISIBLE);
+        chipKitchen = rootView.findViewById(R.id.chip3);
+        chipKitchen.setText("Kitchen");
+        chipKitchen.setVisibility(VISIBLE);
+        chipFloor = rootView.findViewById(R.id.chip4);
+        chipFloor.setText("Floor");
+        chipFloor.setVisibility(VISIBLE);
+        chipWindow = rootView.findViewById(R.id.chip5);
+        chipWindow.setText("Window");
+        chipWindow.setVisibility(VISIBLE);
 
         // Setup RecyclerView
         recyclerServices.setLayoutManager(new LinearLayoutManager(getContext()));

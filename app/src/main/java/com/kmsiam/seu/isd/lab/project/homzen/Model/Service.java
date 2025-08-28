@@ -1,11 +1,7 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Model;
 
 public class Service {
-    private String name;
-    private String category;
-    private String price;
-    private String description;
-    private String imageUrl; // Changed from int imageResId to String imageUrl
+    private String name, category, price,description, imageUrl;
 
     public Service(String name, String category, String price, String description, String imageUrl) {
         this.name = name;

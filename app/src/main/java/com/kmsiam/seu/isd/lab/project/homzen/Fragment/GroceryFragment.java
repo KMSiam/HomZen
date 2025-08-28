@@ -3,64 +3,66 @@ package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kmsiam.seu.isd.lab.project.homzen.Adapter.GroceryAdapter;
+import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GroceryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class GroceryFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    View groceryView;
+    RecyclerView groceryRecyclerView;
+    ArrayList<Grocery> arrGrocery ;
+    GroceryAdapter groceryAdapter;
 
     public GroceryFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GroceryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GroceryFragment newInstance(String param1, String param2) {
-        GroceryFragment fragment = new GroceryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_grocery, container, false);
+
+        groceryView = inflater.inflate(R.layout.fragment_grocery, container, false);
+
+        groceryRecyclerView = groceryView.findViewById(R.id.groceryRecyclerView);
+        groceryRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+
+        arrGrocery = new ArrayList<>();
+        loadDummyGrocery();
+        groceryAdapter = new GroceryAdapter(getContext(), arrGrocery);
+        groceryRecyclerView.setAdapter(groceryAdapter);
+
+        return groceryView;
+    }
+
+    private void loadDummyGrocery(){
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil","Par Unit", "Olive Oil 5 Ltr", "874"));
+
     }
 }

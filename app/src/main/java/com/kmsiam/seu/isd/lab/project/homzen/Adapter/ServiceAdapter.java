@@ -131,11 +131,8 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
     // ServiceViewHolder class
     public static class ServiceViewHolder extends RecyclerView.ViewHolder {
         ImageView imgService;
-        TextView txtServiceName;
-        TextView txtServicePrice;
-        TextView txtServiceDesc;
+        TextView txtServiceName, txtServicePrice, txtServiceDesc;
         Button btnNext;
-
         public ServiceViewHolder(@NonNull View itemView) {
             super(itemView);
             imgService = itemView.findViewById(R.id.imgService);
