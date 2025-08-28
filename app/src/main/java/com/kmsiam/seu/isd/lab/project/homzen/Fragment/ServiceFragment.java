@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.ServiceAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Service;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.ChipUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class ServiceFragment extends Fragment {
     ServiceAdapter adapter;
     List<Service> serviceList;
     SearchView searchView;
-    Chip chipAll, chipBathroom, chipKitchen, chipFloor, chipWindow;
+    private ChipGroup chipGroup;
     View rootView;
 
     @Nullable
@@ -38,19 +40,7 @@ public class ServiceFragment extends Fragment {
         // Initialize views
         recyclerServices = rootView.findViewById(R.id.recyclerServices);
         searchView = rootView.findViewById(R.id.searchView);
-        chipAll = rootView.findViewById(R.id.chipAll);
-        chipBathroom = rootView.findViewById(R.id.chip2);
-        chipBathroom.setText("Bathroom");
-        chipBathroom.setVisibility(VISIBLE);
-        chipKitchen = rootView.findViewById(R.id.chip3);
-        chipKitchen.setText("Kitchen");
-        chipKitchen.setVisibility(VISIBLE);
-        chipFloor = rootView.findViewById(R.id.chip4);
-        chipFloor.setText("Floor");
-        chipFloor.setVisibility(VISIBLE);
-        chipWindow = rootView.findViewById(R.id.chip5);
-        chipWindow.setText("Window");
-        chipWindow.setVisibility(VISIBLE);
+        chipGroup = rootView.findViewById(R.id.chipGroup);
 
         // Setup RecyclerView
         recyclerServices.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -59,93 +49,104 @@ public class ServiceFragment extends Fragment {
         adapter = new ServiceAdapter(getContext(), serviceList);
         recyclerServices.setAdapter(adapter);
 
-        // Setup SearchView
+        // Setup SearchView and Chips
         setupSearchView();
-
-        // Setup Chip listeners
-        setupChipListeners();
+        setupChips();
 
         return rootView;
     }
 
     private void setupSearchView() {
+        // Clear search when a chip is selected
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 adapter.getFilter().filter(query);
-                clearAllChipsExceptSearch(); // Clear chips when searching
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
-                clearAllChipsExceptSearch(); // Clear chips when searching
+                if (newText.isEmpty()) {
+                    // When search is cleared, select the first chip (All)
+                    selectFirstChip();
+                } else {
+                    // When searching, clear all chips and filter by text
+                    clearAllChips();
+                    adapter.getFilter().filter(newText);
+                }
                 return false;
             }
         });
     }
-
-    private void setupChipListeners() {
-        View.OnClickListener chipClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Chip clickedChip = (Chip) v;
-
-                // Clear search query when any chip is clicked
-                searchView.setQuery("", false);
-
-                // Clear all chips first
-                clearAllChips();
-
-                // Select the clicked chip
-                clickedChip.setChecked(true);
-
-                // Handle filtering based on which chip was clicked
-                if (clickedChip == chipAll) {
-                    adapter.getFilter().filter(""); // Show all services
-                } else {
-                    String category = clickedChip.getText().toString();
-                    adapter.getFilter().filter(category); // Filter by category
-                }
+    
+    private void selectFirstChip() {
+        if (chipGroup.getChildCount() > 0) {
+            // Clear any text in search view
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+            
+            // Select the first chip (All)
+            Chip firstChip = (Chip) chipGroup.getChildAt(0);
+            if (!firstChip.isChecked()) {
+                firstChip.setChecked(true);
+                // Trigger the filter for All items
+                adapter.getFilter().filter("");
             }
-        };
+        }
+    }
 
-        // Set listeners for all chips
-        chipAll.setOnClickListener(chipClickListener);
-        chipBathroom.setOnClickListener(chipClickListener);
-        chipKitchen.setOnClickListener(chipClickListener);
-        chipFloor.setOnClickListener(chipClickListener);
-        chipWindow.setOnClickListener(chipClickListener);
-
-        //Clear all when clicking category container area
-        rootView.findViewById(R.id.categoryContainer).setOnClickListener(new View.OnClickListener() {
+    private void setupChips() {
+        // Define your categories
+        String[] categories = {"Bathroom", "Kitchen", "Floor", "Window", "Glass"};
+        
+        // Setup chips using the utility class
+        ChipUtils.setupChips(requireContext(), chipGroup, categories, adapter.getFilter(), 
+            new ChipUtils.OnChipSelectedListener() {
+                @Override
+                public void onChipSelected(String category) {
+                    // Clear search when a chip is selected
+                    searchView.setQuery("", false);
+                    searchView.clearFocus();
+                }
+            });
+            
+        // Set up search view to clear chip selection when searching
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-                clearAllChips();
-                chipAll.setChecked(true); // Select "All" chip
-                adapter.getFilter().filter(""); // Show all services
-                searchView.setQuery("", false); // Clear search
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    // When search is cleared, select the first chip (All)
+                    if (chipGroup.getChildCount() > 0) {
+                        Chip firstChip = (Chip) chipGroup.getChildAt(0);
+                        firstChip.setChecked(true);
+                    }
+                } else {
+                    // When searching, clear all chips
+                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                        Chip chip = (Chip) chipGroup.getChildAt(i);
+                        chip.setChecked(false);
+                    }
+                }
+                adapter.getFilter().filter(newText);
+                return true;
             }
         });
     }
 
-    private void clearAllChips() {
-        chipAll.setChecked(false);
-        chipBathroom.setChecked(false);
-        chipKitchen.setChecked(false);
-        chipFloor.setChecked(false);
-        chipWindow.setChecked(false);
-    }
 
-    private void clearAllChipsExceptSearch() {
-        // This method clears chips when user types in search
-        // but doesn't interfere with search functionality
-        chipAll.setChecked(false);
-        chipBathroom.setChecked(false);
-        chipKitchen.setChecked(false);
-        chipFloor.setChecked(false);
-        chipWindow.setChecked(false);
+
+    private void clearAllChips() {
+        // This method clears all chips
+        for (int i = 0; i < chipGroup.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroup.getChildAt(i);
+            chip.setChecked(false);
+        }
     }
 
     private void loadDummyServices() {

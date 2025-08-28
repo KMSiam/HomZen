@@ -1,23 +1,22 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
-import static android.view.View.VISIBLE;
-
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.GroceryAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.ChipUtils;
 
 import java.util.ArrayList;
 
@@ -27,8 +26,7 @@ public class GroceryFragment extends Fragment {
     ArrayList<Grocery> arrGrocery ;
     GroceryAdapter groceryAdapter;
     SearchView searchView;
-    Chip chipAll, chipOil, chipFruits, chipVegetables, chipSnacks, chipDrinks;
-
+    private ChipGroup chipGroup;
 
     public GroceryFragment() {
         // Required empty public constructor
@@ -37,120 +35,114 @@ public class GroceryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         groceryView = inflater.inflate(R.layout.fragment_grocery, container, false);
 
+        // Initialize views
         groceryRecyclerView = groceryView.findViewById(R.id.groceryRecyclerView);
-        groceryRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
-
-        //search and chip view
         searchView = groceryView.findViewById(R.id.searchView);
-        chipAll = groceryView.findViewById(R.id.chipAll);
-        chipOil = groceryView.findViewById(R.id.chip2);
-        chipOil.setText("Oil");
-        chipOil.setVisibility(VISIBLE);
-        chipFruits = groceryView.findViewById(R.id.chip3);
-        chipFruits.setText("Fruits");
-        chipFruits.setVisibility(VISIBLE);
-        chipVegetables = groceryView.findViewById(R.id.chip4);
-        chipVegetables.setText("Vegetables");
-        chipVegetables.setVisibility(VISIBLE);
-        chipSnacks = groceryView.findViewById(R.id.chip5);
-        chipSnacks.setText("Snacks");
-        chipSnacks.setVisibility(VISIBLE);
-        chipDrinks = groceryView.findViewById(R.id.chip6);
-        chipDrinks.setText("Drinks");
-        chipDrinks.setVisibility(VISIBLE);
+        chipGroup = groceryView.findViewById(R.id.chipGroup);
 
+        // Setup RecyclerView
+        groceryRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        
+        // Load data and setup adapter
         arrGrocery = new ArrayList<>();
         loadDummyGrocery();
         groceryAdapter = new GroceryAdapter(getContext(), arrGrocery);
         groceryRecyclerView.setAdapter(groceryAdapter);
 
+        // Setup search and chips
         setupSearchView();
-        setupChipListeners();
+        setupChips();
 
         searchView.clearFocus();
-
         return groceryView;
     }
 
     ArrayList<Grocery> originalList = new ArrayList<>();
     boolean isSearching = false;
 
-    private void setupChipListeners() {
-        View.OnClickListener chipClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Chip clickedChip = (Chip) v;
-
-                // Clear search query when any chip is clicked
-                searchView.setQuery("", false);
-
-                // Clear all chips first
-                clearAllChips();
-
-                // Select the clicked chip
-                clickedChip.setChecked(true);
-
-                // Handle filtering based on which chip was clicked
-                if (clickedChip == chipAll) {
-                    groceryAdapter.getFilter().filter(""); // Show all groceries
-                } else {
-                    String category = clickedChip.getText().toString();
-                    groceryAdapter.getFilter().filter(category); // Filter by category
+    private void setupChips() {
+        // Define your categories
+        String[] categories = {"Oil", "Fruits", "Vegetables", "Snacks", "Drinks"};
+        
+        // Setup chips using the utility class
+        ChipUtils.setupChips(requireContext(), chipGroup, categories, groceryAdapter.getFilter(), 
+            new ChipUtils.OnChipSelectedListener() {
+                @Override
+                public void onChipSelected(String category) {
+                    // Clear search when a chip is selected
+                    searchView.setQuery("", false);
+                    searchView.clearFocus();
                 }
-            }
-        };
-
-        // Set listeners for all chips
-        chipAll.setOnClickListener(chipClickListener);
-        chipOil.setOnClickListener(chipClickListener);
-        chipFruits.setOnClickListener(chipClickListener);
-        chipVegetables.setOnClickListener(chipClickListener);
-        chipSnacks.setOnClickListener(chipClickListener);
-        chipDrinks.setOnClickListener(chipClickListener);
-
-        // Clear all when clicking category container area
-        groceryView.findViewById(R.id.categoryContainer).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearAllChips();
-                chipAll.setChecked(true); // Select "All" chip
-                groceryAdapter.getFilter().filter(""); // Show all groceries
-                searchView.setQuery("", false); // Clear search
-            }
-        });
-
-        // Set click listeners for all chips
-        chipAll.setOnClickListener(chipClickListener);
-        chipOil.setOnClickListener(chipClickListener);
-        chipFruits.setOnClickListener(chipClickListener);
-        chipVegetables.setOnClickListener(chipClickListener);
-        chipSnacks.setOnClickListener(chipClickListener);
-        chipDrinks.setOnClickListener(chipClickListener);
-
-        // Set All chip as checked by default
-        chipAll.setChecked(true);
-        groceryAdapter.getFilter().filter("");
-    }
-
-    private void setupSearchView() {
+            });
+            
+        // Set up search view to clear chip selection when searching
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                groceryAdapter.getFilter().filter(query);
-                clearAllChipsExceptSearch(); // Clear chips when searching
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    // When search is cleared, select the first chip (All)
+                    if (chipGroup.getChildCount() > 0) {
+                        Chip firstChip = (Chip) chipGroup.getChildAt(0);
+                        firstChip.setChecked(true);
+                    }
+                } else {
+                    // When searching, clear all chips
+                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                        Chip chip = (Chip) chipGroup.getChildAt(i);
+                        chip.setChecked(false);
+                    }
+                }
                 groceryAdapter.getFilter().filter(newText);
-                clearAllChipsExceptSearch(); // Clear chips when searching
+                return true;
+            }
+        });
+    }
+
+    private void setupSearchView() {
+        // Clear search when a chip is selected
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                groceryAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    // When search is cleared, select the first chip (All)
+                    selectFirstChip();
+                } else {
+                    // When searching, clear all chips and filter by text
+                    clearAllChips();
+                    groceryAdapter.getFilter().filter(newText);
+                }
                 return false;
             }
         });
+    }
+    
+    private void selectFirstChip() {
+        if (chipGroup.getChildCount() > 0) {
+            // Clear any text in search view
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+            
+            // Select the first chip (All)
+            Chip firstChip = (Chip) chipGroup.getChildAt(0);
+            if (!firstChip.isChecked()) {
+                firstChip.setChecked(true);
+                // Trigger the filter for All items
+                groceryAdapter.getFilter().filter("");
+            }
+        }
     }
 
     private void filterByCategory(String category) {
@@ -178,24 +170,14 @@ public class GroceryFragment extends Fragment {
         groceryAdapter.getFilter().filter(newText);
     }
     
-    private void clearAllChips() {
-        chipAll.setChecked(false);
-        chipOil.setChecked(false);
-        chipFruits.setChecked(false);
-        chipVegetables.setChecked(false);
-        chipSnacks.setChecked(false);
-        chipDrinks.setChecked(false);
-    }
 
-    private void clearAllChipsExceptSearch() {
-        // This method clears chips when user types in search
-        // but doesn't interfere with search functionality
-        chipAll.setChecked(false);
-        chipOil.setChecked(false);
-        chipFruits.setChecked(false);
-        chipVegetables.setChecked(false);
-        chipSnacks.setChecked(false);
-        chipDrinks.setChecked(false);
+
+    private void clearAllChips() {
+        // This method clears all chips
+        for (int i = 0; i < chipGroup.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroup.getChildAt(i);
+            chip.setChecked(false);
+        }
     }
 
     private void loadDummyGrocery(){
