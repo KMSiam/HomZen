@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.CartManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,11 +97,20 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         holder.groceryType.setText(arrGrocery.get(position).getType());
         holder.groceryName.setText(arrGrocery.get(position).getName());
         holder.groceryPrice.setText("৳" + arrGrocery.get(position).getPrice());
-        holder.groceryAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Add to cart functionality can be implemented here
-                Toast.makeText(context, " Item added to the cart", Toast.LENGTH_SHORT).show();
+        // Add to cart button click listener
+        holder.groceryAddedToTheCartBtn.setOnClickListener(view -> {
+            // Get the current grocery item
+            Grocery grocery = arrGrocery.get(position);
+            // Add to cart using CartManager
+            CartManager cartManager = new CartManager(context);
+            cartManager.addToCart(grocery);
+            
+            // Show success message
+            Toast.makeText(context, "Item added to cart", Toast.LENGTH_SHORT).show();
+            
+            // Optional: Notify any listeners that the cart was updated
+            if (context instanceof OnCartUpdateListener) {
+                ((OnCartUpdateListener) context).onCartUpdated();
             }
         });
         // Add this ONE line for animation
@@ -123,14 +133,14 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView groceryImage;
         TextView groceryType, groceryName, groceryPrice;
-        Button groceryAddButton;
+        Button groceryAddedToTheCartBtn;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             groceryImage = itemView.findViewById(R.id.grocery_item_image);
             groceryType = itemView.findViewById(R.id.grocery_item_type);
             groceryName = itemView.findViewById(R.id.grocery_item_name);
             groceryPrice = itemView.findViewById(R.id.grocery_item_price);
-            groceryAddButton = itemView.findViewById(R.id.grocery_btn_add);
+            groceryAddedToTheCartBtn = itemView.findViewById(R.id.grocery_btn_add);
 
         }
     }
