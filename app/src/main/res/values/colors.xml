@@ -20,7 +20,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple_200">#BB86FC</color>
-    <color name="purple_500">#6200EE</color>
+    <color name="purple_500">#9C27B0</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>
@@ -29,5 +29,6 @@
     <color name="card_stroke">#1A000000</color>
     <color name="ripple_color">#33FF5722</color>
     <color name="ripple_light">#1FFFFFFF</color>
+    <color name="gray">#9E9E9E</color>
 
 </resources>

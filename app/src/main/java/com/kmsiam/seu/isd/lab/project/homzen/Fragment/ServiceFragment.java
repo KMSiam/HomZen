@@ -1,7 +1,5 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
-import static android.view.View.VISIBLE;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

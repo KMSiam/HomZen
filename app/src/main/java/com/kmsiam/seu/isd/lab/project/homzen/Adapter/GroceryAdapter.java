@@ -5,6 +5,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -23,6 +25,7 @@ import java.util.List;
 
 public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHolder> implements Filterable {
 
+    int lastPosition = -1;
     Context context;
     ArrayList<Grocery> arrGrocery;
     public GroceryAdapter(Context context, ArrayList<Grocery> arrGrocery) {
@@ -32,6 +35,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     }
     private List<Grocery> arrGroceryFull;
     
+    @SuppressLint("NotifyDataSetChanged")
     public void setFilteredList(ArrayList<Grocery> filteredList) {
         this.arrGrocery = new ArrayList<>(filteredList);
         this.arrGroceryFull = new ArrayList<>(filteredList);
@@ -47,13 +51,13 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Grocery> filteredList = new ArrayList<>();
-            
-            if (constraint == null || constraint.length() == 0) {
+
+            if (constraint == null || constraint.isEmpty()) {
                 // If search is empty, show all groceries
                 filteredList.addAll(arrGroceryFull);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                
+
                 for (Grocery item : arrGroceryFull) {
                     // Search in both name and category (case insensitive)
                     if (item.getName().toLowerCase().contains(filterPattern) ||
@@ -63,12 +67,13 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
                     }
                 }
             }
-            
+
             FilterResults results = new FilterResults();
             results.values = filteredList;
             return results;
         }
         
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             arrGrocery.clear();
@@ -86,7 +91,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.groceryImage.setImageResource(arrGrocery.get(position).getImage());
         holder.groceryType.setText(arrGrocery.get(position).getType());
         holder.groceryName.setText(arrGrocery.get(position).getName());
@@ -98,6 +103,16 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
                 Toast.makeText(context, " Item added to the cart", Toast.LENGTH_SHORT).show();
             }
         });
+        // Add this ONE line for animation
+        setSlideInAnimation(holder.itemView, position);
+    }
+
+    private void setSlideInAnimation(View view, int position) {
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.item_slide_in_bottom);
+            view.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
@@ -111,7 +126,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         Button groceryAddButton;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             groceryImage = itemView.findViewById(R.id.grocery_item_image);
             groceryType = itemView.findViewById(R.id.grocery_item_type);
             groceryName = itemView.findViewById(R.id.grocery_item_name);

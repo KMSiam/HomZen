@@ -60,8 +60,6 @@ public class GroceryFragment extends Fragment {
     }
 
     ArrayList<Grocery> originalList = new ArrayList<>();
-    boolean isSearching = false;
-
     private void setupChips() {
         // Define your categories
         String[] categories = {"Oil", "Fruits", "Vegetables", "Snacks", "Drinks"};
@@ -181,36 +179,36 @@ public class GroceryFragment extends Fragment {
     }
 
     private void loadDummyGrocery(){
+        // Fruits category
+        arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Apple", "200"));
+        arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Banana", "80"));
+        arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Orange", "120"));
+
         // Oil category
         arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Olive Oil 5 Ltr", "874"));
         arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Sunflower Oil 2 Ltr", "450"));
         arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Mustard Oil 1 Ltr", "250"));
-        
-        // Fruits category
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Fruits", "Per Kg", "Apple", "200"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Fruits", "Per Kg", "Banana", "80"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Fruits", "Per Kg", "Orange", "120"));
-        
-        // Vegetables category
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Vegetables", "Per Kg", "Potato", "30"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Vegetables", "Per Kg", "Tomato", "40"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Vegetables", "Per Kg", "Onion", "35"));
-        
+
         // Snacks category
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Snacks", "Pack of 1", "Chips", "20"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Snacks", "Pack of 1", "Biscuits", "15"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Snacks", "Pack of 1", "Chocolate", "50"));
-        
+        arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Chips", "20"));
+        arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Biscuits", "15"));
+        arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Chocolate", "50"));
+
+        // Vegetables category
+        arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Potato", "30"));
+        arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Tomato", "40"));
+        arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Onion", "35"));
+
         // Drinks category
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Drinks", "1.5L Bottle", "Cola", "90"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Drinks", "1L Pack", "Orange Juice", "120"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Drinks", "500ml Can", "Energy Drink", "80"));
+        arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "1.5L Bottle", "Cola", "90"));
+        arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "1L Pack", "Orange Juice", "120"));
+        arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "500ml Can", "Energy Drink", "80"));
         
         // More items for testing
         arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Coconut Oil 1 Ltr", "300"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Fruits", "Per Kg", "Mango", "150"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Vegetables", "Per Kg", "Carrot", "60"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Snacks", "Pack of 1", "Nuts Mix", "100"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Drinks", "1L Bottle", "Mineral Water", "30"));
+        arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Mango", "150"));
+        arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Carrot", "60"));
+        arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Nuts Mix", "100"));
+        arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "1L Bottle", "Mineral Water", "30"));
     }
 }

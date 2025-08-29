@@ -1,5 +1,6 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -16,8 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.kmsiam.seu.isd.lab.project.homzen.Activity.ServiceDetailActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Service;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
@@ -44,6 +43,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         return new ServiceViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ServiceViewHolder holder, int position) {
         Service service = serviceList.get(position);
@@ -95,7 +95,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Service> filteredList = new ArrayList<>();
 
-            if (constraint == null || constraint.length() == 0) {
+            if (constraint == null || constraint.isEmpty()) {
                 // If search is empty, show all services
                 filteredList.addAll(serviceListFull);
             } else {
@@ -115,6 +115,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
             return results;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             serviceList.clear();
