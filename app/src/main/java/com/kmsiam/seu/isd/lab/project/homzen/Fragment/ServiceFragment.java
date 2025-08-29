@@ -137,8 +137,6 @@ public class ServiceFragment extends Fragment {
         });
     }
 
-
-
     private void clearAllChips() {
         // This method clears all chips
         for (int i = 0; i < chipGroup.getChildCount(); i++) {
@@ -148,19 +146,99 @@ public class ServiceFragment extends Fragment {
     }
 
     private void loadDummyServices() {
-        // Using local drawable resources for images
-        serviceList.add(new Service("Premium Bathroom Cleaning", "Bathroom", "1900", "Deep cleaning for bathroom.", R.drawable.ic_bathroom));
-        serviceList.add(new Service("Kitchen Regular Cleaning", "Kitchen", "699", "Basic regular cleaning for kitchen", R.drawable.ic_kitchen));
-        serviceList.add(new Service("Floor Deep Cleaning", "Floor", "2800", "Complete floor deep cleaning", R.drawable.ic_floor));
-        serviceList.add(new Service("Full Window Cleaning", "Window", "1000", "Cleaning for standard windows", R.drawable.ic_window));
-        serviceList.add(new Service("Kitchen Regular Cleaning", "Kitchen", "699", "Basic regular cleaning for kitchen", R.drawable.ic_kitchen));
-        serviceList.add(new Service("Premium Bathroom Cleaning", "Bathroom", "1900", "Deep cleaning for bathroom", R.drawable.ic_bathroom));
-        serviceList.add(new Service("Kitchen Premium Cleaning", "Kitchen", "699", "Basic regular cleaning for kitchen", R.drawable.ic_kitchen));
-        serviceList.add(new Service("Floor Deep Cleaning", "Floor", "2800", "Complete floor deep cleaning", R.drawable.ic_floor));
-        serviceList.add(new Service("Full Window Premium Cleaning", "Window", "1000", "Cleaning for standard windows", R.drawable.ic_window));
-        serviceList.add(new Service("Kitchen Regular Cleaning", "Kitchen", "699", "Basic regular cleaning for kitchen", R.drawable.ic_kitchen));
-        serviceList.add(new Service("Floor Stander Cleaning", "Floor", "2800", "Complete floor deep cleaning", R.drawable.ic_floor));
-        serviceList.add(new Service("Full Window Stander Cleaning", "Window", "500", "Cleaning for standard windows", R.drawable.ic_window));
-        serviceList.add(new Service("Thai Glass Cleaning", "Glass", "1500", "Cleaning for Thai glass panels", R.drawable.ic_glass));
+        // Create some service providers
+        Service.ServiceProvider cleanPro = new Service.ServiceProvider(
+            "CleanPro Services", 
+            "Professional cleaning service with 5+ years of experience.",
+            "+880 1785 954300", 
+            "contact@cleanpro.com", 
+            4.8f, 
+            120, 
+            R.drawable.service_probider
+        );
+
+        Service.ServiceProvider homeCare = new Service.ServiceProvider(
+            "HomeCare Specialists", 
+            "Expert home cleaning with eco-friendly products.",
+            "+880 1712 345678", 
+            "info@homecare.com", 
+            4.9f, 
+            85, 
+            R.drawable.ic_launcher_foreground
+        );
+
+        Service.ServiceProvider freshNShine = new Service.ServiceProvider(
+            "Fresh & Shine", 
+            "Bringing sparkle to your home with our premium cleaning services.",
+            "+880 1812 345678", 
+            "service@freshnshine.com", 
+            4.7f, 
+            156, 
+            R.drawable.ic_launcher_foreground
+        );
+
+        // Using local drawable resources for images with specific providers
+        serviceList.add(new Service("Premium Bathroom Cleaning", "Bathroom", "1900", 
+            "Deep cleaning for bathroom with sanitization and mold removal.", 
+            R.drawable.ic_bathroom,
+            cleanPro));
+            
+        serviceList.add(new Service("Kitchen Regular Cleaning", "Kitchen", "699", 
+            "Basic regular cleaning for kitchen including countertops and appliances.", 
+            R.drawable.ic_kitchen,
+            homeCare));
+            
+        serviceList.add(new Service("Floor Deep Cleaning", "Floor", "2800", 
+            "Complete floor deep cleaning for all types of flooring.", 
+            R.drawable.ic_floor,
+            freshNShine));
+            
+        serviceList.add(new Service("Full Window Cleaning", "Window", "1000", 
+            "Professional cleaning for standard windows, inside and out.", 
+            R.drawable.ic_window,
+            cleanPro));
+            
+        serviceList.add(new Service("Kitchen Deep Cleaning", "Kitchen", "1299", 
+            "Thorough deep cleaning including cabinets, oven, and hard-to-reach areas.", 
+            R.drawable.ic_kitchen,
+            homeCare));
+            
+        serviceList.add(new Service("Bathroom Deep Clean", "Bathroom", "2200", 
+            "Intensive bathroom cleaning with grout and tile treatment.", 
+            R.drawable.ic_bathroom,
+            freshNShine));
+            
+        serviceList.add(new Service("Kitchen Premium Cleaning", "Kitchen", "1599", 
+            "Premium kitchen cleaning with appliance deep clean and organization.", 
+            R.drawable.ic_kitchen,
+            cleanPro));
+            
+        serviceList.add(new Service("Hardwood Floor Care", "Floor", "3500", 
+            "Specialized cleaning and polishing for hardwood floors.", 
+            R.drawable.ic_floor,
+            homeCare));
+            
+        serviceList.add(new Service("Carpet Deep Cleaning", "Floor", "2500", 
+            "Steam cleaning and stain removal for carpets.", 
+            R.drawable.ic_floor,
+            freshNShine));
+            
+        serviceList.add(new Service("Window Track Cleaning", "Window", "1500", 
+            "Detailed cleaning of window tracks and sills.", 
+            R.drawable.ic_window,
+            cleanPro));
+            
+        serviceList.add(new Service("Marble Floor Polishing", "Floor", "4500", 
+            "Professional polishing and sealing for marble floors.", 
+            R.drawable.ic_floor,
+            homeCare));
+            
+        serviceList.add(new Service("Skylight Cleaning", "Window", "2000", 
+            "Specialized cleaning for hard-to-reach skylights.", 
+            R.drawable.ic_window));
+            
+        serviceList.add(new Service("Glass Partition Cleaning", "Glass", "1800", 
+            "Streak-free cleaning for glass partitions and doors.", 
+            R.drawable.ic_glass));
     }
 }

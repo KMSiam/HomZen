@@ -72,11 +72,23 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
     }
 
     private void navigateToDetail(Service service) {
+        Service.ServiceProvider provider = service.getProvider();
         Intent intent = new Intent(context, ServiceDetailActivity.class);
+        
+        // Service details
         intent.putExtra("name", service.getName());
         intent.putExtra("price", "৳" + service.getPrice());
         intent.putExtra("desc", service.getDescription());
-        intent.putExtra("imageResId", service.getImageResId()); // Pass drawable resource ID
+        intent.putExtra("imageResId", service.getImageResId());
+        
+        // Provider details
+        intent.putExtra("providerName", provider.getName());
+        intent.putExtra("providerDesc", provider.getDescription());
+        intent.putExtra("providerPhone", provider.getPhone());
+        intent.putExtra("providerEmail", provider.getEmail());
+        intent.putExtra("providerRating", provider.getFormattedRating());
+        intent.putExtra("providerImageResId", provider.getImageResId());
+        
         context.startActivity(intent);
     }
 

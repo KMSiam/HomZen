@@ -46,45 +46,55 @@ public class ServiceDetailActivity extends AppCompatActivity {
         String desc = getIntent().getStringExtra("desc");
         int imageResId = getIntent().getIntExtra("imageResId", R.drawable.ic_launcher_foreground);
 
+        // Get provider data from intent
+        String providerName = getIntent().getStringExtra("providerName");
+        String providerDesc = getIntent().getStringExtra("providerDesc");
+        String providerPhone = getIntent().getStringExtra("providerPhone");
+        String providerEmail = getIntent().getStringExtra("providerEmail");
+        String providerRating = getIntent().getStringExtra("providerRating");
+        int providerImageResId = getIntent().getIntExtra("providerImageResId", R.drawable.service_probider);
+
         // Set service values
         topAppBar.setTitle(name);
         txtTitle.setText(name);
-        txtPrice.setText("Starts from " + price);
+        txtPrice.setText(price);
         txtDesc.setText(desc);
 
         // Load service image from drawable resource
         imgService.setImageResource(imageResId);
 
-        // Set provider data (you can get this from intent or database later)
-        txtProviderName.setText("CleanPro Services");
-        txtProviderRating.setText("⭐ 4.8 (120 reviews)");
-        txtProviderDesc.setText("Professional cleaning service with 5+ years of experience.");
-        txtProviderPhone.setText("+880 1785 954300");
-        btnProviderPhone.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent iPhone = new Intent(Intent.ACTION_DIAL);
-                iPhone.setData(Uri.parse("tel:" + txtProviderPhone.getText().toString().trim()));
-                startActivity(iPhone);
-                return true;
-            }
+        // Set provider data
+        txtProviderName.setText(providerName);
+        txtProviderRating.setText(providerRating);
+        txtProviderDesc.setText(providerDesc);
+        txtProviderPhone.setText(providerPhone);
+        
+        // Phone click listener
+        btnProviderPhone.setOnLongClickListener(v -> {
+            Intent iPhone = new Intent(Intent.ACTION_DIAL);
+            iPhone.setData(Uri.parse("tel:" + providerPhone));
+            startActivity(iPhone);
+            return true;
         });
-        txtProviderEmail.setText("contact@cleanpro.com");
-        btnProviderEmail.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent iEmail = new Intent(Intent.ACTION_SEND);
-                iEmail.setType("message/rfc822");
-                iEmail.putExtra(Intent.EXTRA_EMAIL, new String[]{txtProviderEmail.getText().toString().trim()});
-                iEmail.putExtra(Intent.EXTRA_SUBJECT, "Need more info about "+ txtTitle.getText().toString().trim());
-                iEmail.putExtra(Intent.EXTRA_TEXT, "Body of the email");
-                startActivity(Intent.createChooser(iEmail, "Choose an Email client"));
-                return true;
-            }
+        
+        // Email click listener
+        txtProviderEmail.setText(providerEmail);
+        btnProviderEmail.setOnLongClickListener(v -> {
+            Intent iEmail = new Intent(Intent.ACTION_SEND);
+            iEmail.setType("message/rfc822");
+            iEmail.putExtra(Intent.EXTRA_EMAIL, new String[]{providerEmail});
+            iEmail.putExtra(Intent.EXTRA_SUBJECT, "Need more info about " + name);
+            iEmail.putExtra(Intent.EXTRA_TEXT, "Hello,\n\nI am interested in your " + name + " service. Could you please provide more information?\n\nThank you!");
+            startActivity(Intent.createChooser(iEmail, "Choose an Email client"));
+            return true;
         });
 
         // Load provider image from drawable resource
-        imgProvider.setImageResource(R.drawable.service_probider);
+        Glide.with(this)
+             .load(providerImageResId)
+             .diskCacheStrategy(DiskCacheStrategy.ALL)
+             .placeholder(R.drawable.ic_launcher_foreground)
+             .into(imgProvider);
 
         // Back button
         topAppBar.setNavigationOnClickListener(v -> {
