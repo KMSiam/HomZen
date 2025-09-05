@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButtonText = findViewById(R.id.forgotPasswordButton);
 
         loginButton.setOnClickListener(v -> {
-            if (!validateEmail() || !validatePassword()) {
+            if (!loginCredential()) {
                 return;
             }
             loginButton.setEnabled(false);
@@ -136,30 +136,21 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(LoginActivity.this, SignupActivity.class));
             finish();
         });
-
-
-
     }
 
-    public Boolean validateEmail() {
-        String val = Objects.requireNonNull(loginEmail.getText()).toString().trim();
-        if (val.isEmpty()) {
+    public Boolean loginCredential() {
+        String valEmail = Objects.requireNonNull(loginEmail.getText()).toString().trim();
+        String valPass = Objects.requireNonNull(loginPassword.getText()).toString().trim();
+
+        if (valEmail.isEmpty() || valPass.isEmpty()) {
             loginEmail.setError("Email cannot be empty");
-            return false;
-        } else {
-            loginEmail.setError(null);
-            return true;
-        }
-    }
-
-    public Boolean validatePassword() {
-        String val = Objects.requireNonNull(loginPassword.getText()).toString().trim();
-        if (val.isEmpty()) {
             loginPassword.setError("Password cannot be empty");
             return false;
         } else {
+            loginEmail.setError(null);
             loginPassword.setError(null);
             return true;
         }
     }
+
 }

@@ -107,11 +107,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
             
             // Show success message
             Toast.makeText(context, "Item added to cart", Toast.LENGTH_SHORT).show();
-            
-            // Optional: Notify any listeners that the cart was updated
-            if (context instanceof OnCartUpdateListener) {
-                ((OnCartUpdateListener) context).onCartUpdated();
-            }
         });
         // Add this ONE line for animation
         setSlideInAnimation(holder.itemView, position);
