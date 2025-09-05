@@ -23,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HomZen">
         <activity
+            android:name=".Activity.EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ServiceDetailActivity"
             android:exported="false" />
 

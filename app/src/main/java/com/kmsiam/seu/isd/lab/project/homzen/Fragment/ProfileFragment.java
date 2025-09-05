@@ -2,13 +2,10 @@ package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -29,18 +25,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kmsiam.seu.isd.lab.project.homzen.Activity.EditProfileActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Activity.LoginActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
@@ -60,8 +48,7 @@ public class ProfileFragment extends Fragment {
     ImageView userProfilePic;
     TextView userName, userEmail;
     Button loginButton;
-    FloatingActionButton btnEditProfile;
-    LinearLayout guestView, btnAddress, btnShare;
+    LinearLayout guestView, btnShare;
     ScrollView loggedInView;
 
     // Firebase
@@ -69,15 +56,29 @@ public class ProfileFragment extends Fragment {
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
     static final int MAX_IMAGE_SIZE = 500; // Max width/height in pixels
 
-    // Location
-    private FusedLocationProviderClient fusedLocationClient;
-
     //Simple in-memory cache to prevent redundant reloads
     private boolean isUserDataLoaded = false;
     private String cachedName = null;
     private String cachedProfileImage = null;
 
     // Image Picker
+    private ActivityResultLauncher<Intent> editProfileLauncher;
+    
+    // Initialize edit profile launcher
+    {
+        editProfileLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // Profile was updated, refresh the data
+                    isUserDataLoaded = false;
+                    cachedName = null;
+                    cachedProfileImage = null;
+                    updateUI();
+                }
+            });
+    }
+    
     final ActivityResultLauncher<Intent> imagePicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -110,28 +111,18 @@ public class ProfileFragment extends Fragment {
         loginButton = view.findViewById(R.id.login_button);
         guestView = view.findViewById(R.id.guestView);
         loggedInView = view.findViewById(R.id.loggedInView);
-        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        btnAddress = view.findViewById(R.id.btnAddress);
         btnShare = view.findViewById(R.id.btnShare);
 
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
-
         // Resolve userId once (if logged in)
-        FirebaseUser current = auth.getCurrentUser();     // NEW
-        if (current != null) userId = current.getUid();   // NEW
+        FirebaseUser current = auth.getCurrentUser();
+        if (current != null) userId = current.getUid();
 
         // Button Click Listeners
-        view.findViewById(R.id.btnEditProfile).setOnClickListener(v -> pickImage());
+        view.findViewById(R.id.btnChangeProfilePic).setOnClickListener(v -> pickImage());
+        view.findViewById(R.id.btnEditProfile).setOnClickListener(v -> 
+            editProfileLauncher.launch(new Intent(getActivity(), EditProfileActivity.class)));
         loginButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), LoginActivity.class)));
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> logoutUser());
-
-        btnAddress.setOnClickListener(v -> {              // FIX: use field reference
-            FirebaseUser u = auth.getCurrentUser();       // NEW guard
-            if (checkLocationPermission()) {
-                showAddressDialog();
-            }
-        });
 
         btnShare.setOnClickListener(v -> {
             String appPackageName = requireContext().getPackageName(); // your app package
@@ -259,151 +250,6 @@ public class ProfileFragment extends Fragment {
             return false;
         }
         return true;
-    }
-
-    private void getCurrentAddress(EditText etAddress) {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                try {
-                    Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-                    List<Address> addresses = geocoder.getFromLocation(
-                            location.getLatitude(),
-                            location.getLongitude(),
-                            1
-                    );
-                    if (addresses != null && !addresses.isEmpty()) {
-                        etAddress.setText(addresses.get(0).getAddressLine(0));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Toast.makeText(requireContext(), "Location unavailable. Try again.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // ✅ Method 3: Show Address Dialog
-    private void showAddressDialog() {
-        // Resolve fresh UID (in case user just logged in)
-        FirebaseUser current = auth.getCurrentUser();             // NEW
-        if (current == null) {                                    // NEW
-            Toast.makeText(requireContext(), "Please login first", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        userId = current.getUid();                                // NEW
-
-        Dialog dialog = new Dialog(requireContext(), R.style.TransparentDialog);
-        dialog.setContentView(R.layout.dialog_current_location);
-        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        EditText etAddress = dialog.findViewById(R.id.location_editText_dialog);
-        Button btnSave = dialog.findViewById(R.id.btnSave);
-        Button btnCancel = dialog.findViewById(R.id.btnCancel);
-        MapView mapView = dialog.findViewById(R.id.mapView);
-
-        mapView.onCreate(null);
-        mapView.onResume();
-
-        // 🔹 Step 1: Try to load saved address from Firestore
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists() && doc.contains("address")) {
-                        etAddress.setText(doc.getString("address"));
-                    } else {
-                        // fallback to current GPS address
-                        getCurrentAddress(etAddress);
-                    }
-                });
-
-        // 🔹 Step 2: Setup Google Map
-        mapView.getMapAsync(googleMap -> {
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-                    if (location != null) {
-                        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15));
-
-                        Marker marker = googleMap.addMarker(new MarkerOptions()
-                                .position(myLatLng)
-                                .title("Your Location")
-                                .draggable(true));
-
-                        // Drag marker updates address
-                        googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                            @Override public void onMarkerDragStart(Marker marker) {}
-                            @Override public void onMarkerDrag(Marker marker) {}
-                            @Override
-                            public void onMarkerDragEnd(Marker marker) {
-                                updateAddressFromLatLng(marker.getPosition(), etAddress);
-                            }
-                        });
-
-                        // Tap map updates address
-                        googleMap.setOnMapClickListener(pos -> {
-                            marker.setPosition(pos);
-                            updateAddressFromLatLng(pos, etAddress);
-                        });
-                    } else {
-                        Toast.makeText(requireContext(), "Location unavailable. Open GPS.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-        // 🔹 Step 3: Save/Update Firestore
-        btnSave.setOnClickListener(v -> {
-            String newAddress = etAddress.getText().toString().trim();
-            if (!newAddress.isEmpty()) {
-                db.collection("users").document(userId)
-                        .update("address", newAddress)
-                        .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(requireContext(), "Address saved!", Toast.LENGTH_SHORT).show();
-                        })
-                        .addOnFailureListener(e -> {
-                            // If doc doesn’t exist, create it
-                            Map<String, Object> userMap = new HashMap<>();
-                            userMap.put("address", newAddress);
-                            db.collection("users").document(userId).set(userMap)
-                                    .addOnSuccessListener(x ->
-                                            Toast.makeText(requireContext(), "Address saved!", Toast.LENGTH_SHORT).show());
-                        });
-            }
-            dialog.dismiss();
-        });
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-
-        // ✅ Properly release MapView when the dialog closes (prevents leaks)
-        dialog.setOnDismissListener(d -> {                        // NEW
-            try {
-                mapView.onPause();
-                mapView.onDestroy();
-                mapView.onLowMemory();
-            } catch (Exception ignored) { }
-        });
-
-        dialog.show();
-    }
-
-    // ✅ Helper to update EditText from LatLng
-    private void updateAddressFromLatLng(LatLng pos, EditText etAddress) {
-        try {
-            Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-            List<Address> addresses = geocoder.getFromLocation(pos.latitude, pos.longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                etAddress.setText(addresses.get(0).getAddressLine(0));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
