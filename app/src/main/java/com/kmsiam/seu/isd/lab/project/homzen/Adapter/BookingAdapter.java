@@ -49,10 +49,10 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         
         // Set status color
         if ("Confirmed".equals(booking.getStatus())) {
-            holder.status.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
+            holder.status.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
             holder.status.setTextColor(context.getResources().getColor(android.R.color.white));
-        } else if ("Completed".equals(booking.getStatus())) {
-            holder.status.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
+        } else if ("Complete".equals(booking.getStatus())) {
+            holder.status.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
             holder.status.setTextColor(context.getResources().getColor(android.R.color.white));
         } else {
             holder.status.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
