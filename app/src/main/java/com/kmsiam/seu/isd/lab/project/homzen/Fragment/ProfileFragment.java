@@ -122,6 +122,8 @@ public class ProfileFragment extends Fragment {
             editProfileLauncher.launch(new Intent(getActivity(), EditProfileActivity.class)));
         view.findViewById(R.id.btnOrders).setOnClickListener(v -> 
             startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.MyOrdersActivity.class)));
+        view.findViewById(R.id.btnBookings).setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.MyBookingsActivity.class)));
         loginButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), LoginActivity.class)));
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> logoutUser());
 

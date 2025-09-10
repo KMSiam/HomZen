@@ -8,48 +8,56 @@
     android:layout_height="match_parent"
     tools:context=".Activity.ServiceDetailActivity"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="#F5F5F5">
 
     <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lavender"
+        android:background="@color/teal_700"
         android:title="Service Details"
         android:titleTextColor="@android:color/white"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_arrow_back"
+        android:elevation="4dp" />
 
     <!-- Content Scroll -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <!-- Service Image -->
-            <ImageView
-                android:id="@+id/imgServiceDetail"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background"
-                android:background="@android:color/darker_gray" />
+                android:layout_height="220dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
 
-            <!-- Service Details Card -->
-            <androidx.cardview.widget.CardView
-                android:layout_margin="8dp"
+                <ImageView
+                    android:id="@+id/imgServiceDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher_background" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Service Info Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,41 +65,57 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Service Title -->
                     <TextView
                         android:id="@+id/txtServiceTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Floor Deep Cleaning"
-                        android:textSize="22sp"
+                        android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/black" />
+                        android:textColor="#212121" />
 
-                    <!-- Price -->
-                    <TextView
-                        android:id="@+id/txtServicePrice"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Starts from ৳2800"
-                        android:textColor="@android:color/holo_green_dark"
-                        android:textSize="18sp"
-                        android:layout_marginTop="8dp" />
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
 
-                    <!-- Divider -->
+                        <TextView
+                            android:id="@+id/txtServicePrice"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="৳2800"
+                            android:textColor="#E53E3E"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtServiceDuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⏱ 1 hours"
+                            android:textSize="14sp"
+                            android:textColor="#757575"
+                            android:background="#F0F0F0"
+                            android:padding="8dp" />
+
+                    </LinearLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#30000000"
+                        android:background="#E0E0E0"
                         android:layout_marginVertical="16dp" />
 
-                    <!-- Service Description -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Service Description"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/black" />
+                        android:textColor="#212121" />
 
                     <TextView
                         android:id="@+id/txtServiceDetails"
@@ -99,22 +123,20 @@
                         android:layout_height="wrap_content"
                         android:text="Comprehensive cleaning of the floor with vacuum, mopping, and stain removal."
                         android:textSize="14sp"
-                        android:textColor="#666666"
-                        android:layout_marginTop="4dp"
+                        android:textColor="#757575"
+                        android:layout_marginTop="8dp"
                         android:lineSpacingExtra="4dp" />
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Service Provider Section -->
-            <androidx.cardview.widget.CardView
-                android:layout_margin="8dp"
-                android:layout_marginBottom="8dp"
+            <!-- Service Provider Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -126,34 +148,37 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Service Provider"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/black" />
+                        android:textColor="#212121"
+                        android:layout_marginBottom="16dp" />
 
-                    <!-- Provider Info -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="12dp">
+                        android:orientation="horizontal">
 
-                        <!-- Provider Image -->
-                        <ImageView
-                            android:id="@+id/imgProvider"
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_launcher_foreground"
-                            android:background="@android:color/darker_gray"
-                            android:contentDescription="Provider Image" />
+                            app:cardCornerRadius="30dp"
+                            app:cardElevation="2dp">
 
-                        <!-- Provider Details -->
+                            <ImageView
+                                android:id="@+id/imgProvider"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/service_probider" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:paddingStart="16dp">
+                            android:layout_marginStart="16dp">
 
                             <TextView
                                 android:id="@+id/txtProviderName"
@@ -162,7 +187,7 @@
                                 android:text="John Doe"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textColor="@android:color/black" />
+                                android:textColor="#212121" />
 
                             <TextView
                                 android:id="@+id/txtProviderRating"
@@ -171,7 +196,7 @@
                                 android:text="⭐ 4.8 (120 reviews)"
                                 android:textSize="14sp"
                                 android:textColor="#FF9800"
-                                android:layout_marginTop="2dp" />
+                                android:layout_marginTop="4dp" />
 
                             <TextView
                                 android:id="@+id/txtProviderDesc"
@@ -179,102 +204,317 @@
                                 android:layout_height="wrap_content"
                                 android:text="Professional cleaner with 5+ years experience"
                                 android:textSize="12sp"
-                                android:textColor="#666666"
-                                android:layout_marginTop="4dp"
-                                android:maxLines="2"
-                                android:ellipsize="end" />
+                                android:textColor="#757575"
+                                android:layout_marginTop="4dp" />
 
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Provider Contact Info -->
+                    <!-- Contact Buttons -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="16dp"
-                        android:padding="12dp"
-                        android:background="#f8f8f8"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp">
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp">
 
-                        <LinearLayout
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnProviderPhone"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:layout_weight="1"
+                            android:text="Call"
+                            android:textColor="@color/teal_700"
+                            android:backgroundTint="@android:color/white"
+                            app:strokeColor="@color/teal_700"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="8dp"
+                            app:icon="@drawable/ic_phone"
+                            app:iconTint="@color/teal_700"
+                            android:layout_marginEnd="8dp" />
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_phone"
-                                app:tint="#666666" />
-
-                            <TextView
-                                android:id="@+id/txtProviderPhone"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="+880 1234 567890"
-                                android:textSize="14sp"
-                                android:textColor="#666666"
-                                android:layout_marginStart="12dp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnProviderEmail"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="8dp">
+                            android:layout_weight="1"
+                            android:text="Email"
+                            android:textColor="@color/teal_700"
+                            android:backgroundTint="@android:color/white"
+                            app:strokeColor="@color/teal_700"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="8dp"
+                            app:icon="@drawable/ic_email"
+                            app:iconTint="@color/teal_700"
+                            android:layout_marginStart="8dp" />
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_email"
-                                app:tint="#666666" />
+                    </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtProviderEmail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="siam@homzen.com"
-                                android:textSize="14sp"
-                                android:textColor="#666666"
-                                android:layout_marginStart="12dp" />
+                    <!-- Hidden contact info -->
+                    <TextView
+                        android:id="@+id/txtProviderPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+880 1234 567890"
+                        android:visibility="gone" />
 
-                        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtProviderEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="siam@homzen.com"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Booking Options Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Booking Options"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Quantity Selection -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Service Duration (Hours)"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:id="@+id/btnDecreaseQty"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_remove"
+                            android:background="@drawable/circle_background"
+                            android:padding="8dp"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <TextView
+                            android:id="@+id/txtQuantity"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#212121"
+                            android:gravity="center"
+                            android:layout_marginHorizontal="16dp" />
+
+                        <ImageView
+                            android:id="@+id/btnIncreaseQty"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_add"
+                            android:background="@drawable/circle_background"
+                            android:padding="8dp"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="hours"
+                            android:textSize="14sp"
+                            android:textColor="#757575"
+                            android:layout_marginStart="16dp" />
+
+                    </LinearLayout>
+
+                    <!-- Date Selection -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Select Date"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <LinearLayout
+                        android:id="@+id/btnSelectDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_input_modern"
+                        android:padding="12dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_orders"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:id="@+id/txtSelectedDate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Select Date"
+                            android:textSize="14sp"
+                            android:textColor="#757575" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_right" />
+
+                    </LinearLayout>
+
+                    <!-- Time Selection -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Select Time"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121" />
+
+                    <LinearLayout
+                        android:id="@+id/btnSelectTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_input_modern"
+                        android:padding="12dp"
+                        android:layout_marginTop="8dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_orders"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:id="@+id/txtSelectedTime"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Select Time"
+                            android:textSize="14sp"
+                            android:textColor="#757575" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_right" />
 
                     </LinearLayout>
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Compact Price & Book Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Price Section -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <!-- Left: Total Price Label & Details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Price"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="#212121" />
+
+                            <TextView
+                                android:id="@+id/txtPriceBreakdown"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="৳2800 per hour × 1"
+                                android:textSize="12sp"
+                                android:textColor="#757575"
+                                android:layout_marginTop="4dp" />
+
+                        </LinearLayout>
+
+                        <!-- Right: Total Amount -->
+                        <TextView
+                            android:id="@+id/txtTotalAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="৳2800"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="#E53E3E"
+                            android:layout_gravity="center_vertical" />
+
+                    </LinearLayout>
+
+                    <!-- Book Service Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBookService"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="BOOK SERVICE"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/teal_700"
+                        app:cornerRadius="12dp"
+                        android:letterSpacing="0.1" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- Continue Button -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@android:color/white"
-        android:elevation="8dp">
-
-        <Button
-            android:id="@+id/btnContinue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CONTINUE TO BOOK"
-            android:backgroundTint="@color/lavender"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.5"/>
-
-    </LinearLayout>
 
 </LinearLayout>

@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:strokeWidth="0dp">
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,16 +21,16 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <!-- Order Icon -->
+            <!-- Service Icon -->
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/circle_background"
+                android:src="@drawable/ic_service"
+                android:background="@color/teal_700"
                 android:padding="8dp"
-                android:src="@drawable/ic_orders" />
+                android:layout_marginEnd="12dp"/>
 
-            <!-- Order Info -->
+            <!-- Service Info -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -39,27 +38,27 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/order_id"
+                    android:id="@+id/booking_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ORD123456789"
-                    android:textColor="#212121"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:text="BKG123456789"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"/>
 
                 <TextView
-                    android:id="@+id/order_date"
+                    android:id="@+id/created_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
                     android:text="Dec 10, 2024 • 2:30 PM"
+                    android:textSize="12sp"
                     android:textColor="#757575"
-                    android:textSize="12sp" />
+                    android:layout_marginTop="2dp"/>
             </LinearLayout>
 
             <!-- Status Badge -->
             <TextView
-                android:id="@+id/order_status"
+                android:id="@+id/booking_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -74,16 +73,34 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Divider -->
-        <View
+        <!-- Service Details -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:alpha="0.2"
-            android:background="@android:color/white" />
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:orientation="vertical">
 
-        <!-- Details Section -->
+            <TextView
+                android:id="@+id/service_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Floor Deep Cleaning"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#212121"/>
+
+            <TextView
+                android:id="@+id/provider_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Provider: John Doe"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- Booking Details -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,7 +108,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <!-- Items Info -->
+            <!-- Left: Schedule Info -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -101,71 +118,70 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
-                        android:layout_marginEnd="6dp"
-                        android:src="@drawable/ic_grocery" />
+                        android:src="@drawable/ic_orders"
+                        android:layout_marginEnd="6dp"/>
 
                     <TextView
-                        android:id="@+id/item_count"
+                        android:id="@+id/booking_date_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:alpha="0.9"
-                        android:text="3 items"
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
+                        android:text="Dec 15, 2024 at 10:00"
+                        android:textSize="13sp"
+                        android:textColor="#757575"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="4dp">
 
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
-                        android:layout_marginEnd="6dp"
-                        android:src="@drawable/ic_my_location" />
+                        android:src="@drawable/ic_orders"
+                        android:layout_marginEnd="6dp"/>
 
                     <TextView
+                        android:id="@+id/duration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:alpha="0.9"
-                        android:text="Home Delivery"
-                        android:textColor="@color/neutral_400"
-                        android:textSize="13sp" />
+                        android:text="3 hours"
+                        android:textSize="13sp"
+                        android:textColor="#757575"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Price Section -->
+            <!-- Right: Price -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="end">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Total Amount"
-                    android:textColor="#757575"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    android:textColor="#757575"/>
 
                 <TextView
-                    android:id="@+id/order_total"
+                    android:id="@+id/total_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="৳450"
+                    android:text="৳8400"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
                     android:textColor="#E53E3E"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="2dp"/>
             </LinearLayout>
         </LinearLayout>
 

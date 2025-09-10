@@ -29,6 +29,9 @@
             android:name=".Activity.MyOrdersActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.MyBookingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ServiceDetailActivity"
             android:exported="false" />
 
