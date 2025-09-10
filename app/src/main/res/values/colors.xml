@@ -1,34 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors -->
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
-
+    <!-- Primary Brand Colors -->
+    <color name="primary_green">#00C853</color>
+    <color name="primary_green_dark">#00A843</color>
+    <color name="primary_green_light">#4CAF50</color>
+    <color name="primary_green_50">#E8F5E8</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary_orange">#FF6B35</color>
+    <color name="secondary_orange_light">#FF8A65</color>
+    <color name="accent_blue">#2196F3</color>
+    <color name="accent_purple">#9C27B0</color>
+    
+    <!-- Neutral Colors -->
+    <color name="neutral_900">#1A1A1A</color>
+    <color name="neutral_800">#2D2D2D</color>
+    <color name="neutral_700">#404040</color>
+    <color name="neutral_600">#666666</color>
+    <color name="neutral_500">#808080</color>
+    <color name="neutral_400">#999999</color>
+    <color name="neutral_300">#CCCCCC</color>
+    <color name="neutral_200">#E5E5E5</color>
+    <color name="neutral_100">#F5F5F5</color>
+    <color name="neutral_50">#FAFAFA</color>
+    
+    <!-- Surface Colors -->
+    <color name="surface_primary">#FFFFFF</color>
+    <color name="surface_secondary">#F8F9FA</color>
+    <color name="surface_elevated">#FFFFFF</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#00C853</color>
+    <color name="warning">#FF9800</color>
+    <color name="error">#F44336</color>
+    <color name="info">#2196F3</color>
+    
     <!-- Text Colors -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="text_hint">#BDBDBD</color>
-
-    <!-- Background Colors -->
-    <color name="bg_white">#FFFFFF</color>
-    <color name="divider">#1F000000</color> <!-- 12% black -->
-
-    <!-- Profile Specific -->
-    <color name="profile_icon_tint">#BDBDBD</color>
-
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_tertiary">#999999</color>
+    
+    <!-- Legacy Support -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="purple_200">#BB86FC</color>
-    <color name="purple_500">#9C27B0</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
-    <color name="teal_700">#018786</color>
     <color name="lavender">#8692f7</color>
-    <color name="placeholder_bg">#FAFAFA</color>
-    <color name="card_stroke">#1A000000</color>
-    <color name="ripple_color">#33FF5722</color>
-    <color name="ripple_light">#1FFFFFFF</color>
-    <color name="gray">#9E9E9E</color>
-
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="ripple_color">#1A00C853</color>
+    
+    <!-- Material Design Colors -->
+    <color name="colorPrimary">@color/primary_green</color>
+    <color name="colorAccent">@color/accent_blue</color>
 </resources>

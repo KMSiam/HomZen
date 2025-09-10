@@ -1,13 +1,19 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +23,6 @@ import com.google.android.material.chip.ChipGroup;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.ServiceAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Service;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
-import com.kmsiam.seu.isd.lab.project.homzen.Utils.ChipUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,127 +31,191 @@ public class ServiceFragment extends Fragment {
     RecyclerView recyclerServices;
     ServiceAdapter adapter;
     List<Service> serviceList;
-    SearchView searchView;
-    private ChipGroup chipGroup;
-    View rootView;
+    List<Service> serviceListFull;
+    EditText searchView;
+    ChipGroup chipGroup;
+    ImageView clearSearch;
+    ProgressBar searchProgress;
+    LinearLayout emptyState, loadingState;
+    
+    private boolean isChipClicked = false;
+    private Handler searchHandler = new Handler();
+    private Runnable searchRunnable;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_service, container, false);
+        View view = inflater.inflate(R.layout.fragment_service, container, false);
 
         // Initialize views
-        recyclerServices = rootView.findViewById(R.id.recyclerServices);
-        searchView = rootView.findViewById(R.id.searchView);
-        chipGroup = rootView.findViewById(R.id.chipGroup);
+        recyclerServices = view.findViewById(R.id.recyclerServices);
+        searchView = view.findViewById(R.id.searchView);
+        chipGroup = view.findViewById(R.id.chipGroup);
+        clearSearch = view.findViewById(R.id.clearSearch);
+        searchProgress = view.findViewById(R.id.searchProgress);
+        emptyState = view.findViewById(R.id.emptyState);
+        loadingState = view.findViewById(R.id.loadingState);
 
         // Setup RecyclerView
         recyclerServices.setLayoutManager(new LinearLayoutManager(getContext()));
+        
+        // Load data immediately
         serviceList = new ArrayList<>();
         loadDummyServices();
+        serviceListFull = new ArrayList<>(serviceList);
         adapter = new ServiceAdapter(getContext(), serviceList);
         recyclerServices.setAdapter(adapter);
 
-        // Setup SearchView and Chips
-        setupSearchView();
         setupChips();
+        setupSearch();
 
-        return rootView;
-    }
-
-    private void setupSearchView() {
-        // Clear search when a chip is selected
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                adapter.getFilter().filter(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    // When search is cleared, select the first chip (All)
-                    selectFirstChip();
-                } else {
-                    // When searching, clear all chips and filter by text
-                    clearAllChips();
-                    adapter.getFilter().filter(newText);
-                }
-                return false;
-            }
-        });
-    }
-    
-    private void selectFirstChip() {
-        if (chipGroup.getChildCount() > 0) {
-            // Clear any text in search view
-            searchView.setQuery("", false);
-            searchView.clearFocus();
-            
-            // Select the first chip (All)
-            Chip firstChip = (Chip) chipGroup.getChildAt(0);
-            if (!firstChip.isChecked()) {
-                firstChip.setChecked(true);
-                // Trigger the filter for All items
-                adapter.getFilter().filter("");
-            }
-        }
+        return view;
     }
 
     private void setupChips() {
-        // Define your categories
-        String[] categories = {"Bathroom", "Kitchen", "Floor", "Window", "Glass"};
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("All");
         
-        // Setup chips using the utility class
-        ChipUtils.setupChips(requireContext(), chipGroup, categories, adapter.getFilter(), 
-            new ChipUtils.OnChipSelectedListener() {
-                @Override
-                public void onChipSelected(String category) {
-                    // Clear search when a chip is selected
-                    searchView.setQuery("", false);
-                    searchView.clearFocus();
-                }
-            });
+        for (Service item : serviceListFull) {
+            String category = item.getCategory();
+            if (!categories.contains(category)) {
+                categories.add(category);
+            }
+        }
+        
+        for (int i = 0; i < categories.size(); i++) {
+            String category = categories.get(i);
+            Chip chip = new Chip(getContext());
+            chip.setText(category);
+            chip.setCheckable(true);
+            chip.setClickable(true);
             
-        // Set up search view to clear chip selection when searching
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            if (i == 0) {
+                chip.setChecked(true);
+            }
+            
+            chip.setOnClickListener(v -> {
+                filterByCategory(category);
+                isChipClicked = true;
+                searchView.setText("");
+            });
+            chipGroup.addView(chip);
+        }
+    }
+
+    private void setupSearch() {
+        clearSearch.setOnClickListener(v -> {
+            searchView.setText("");
+            clearSearch.setVisibility(View.GONE);
+        });
+
+        searchView.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                clearSearch.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                
+                if (isChipClicked) {
+                    isChipClicked = false;
+                    return;
+                }
+                
+                for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                    ((Chip) chipGroup.getChildAt(i)).setChecked(false);
+                }
+                
+                if (searchRunnable != null) {
+                    searchHandler.removeCallbacks(searchRunnable);
+                }
+                
+                searchRunnable = () -> filterBySearch(s.toString());
+                searchHandler.postDelayed(searchRunnable, 300);
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    // When search is cleared, select the first chip (All)
-                    if (chipGroup.getChildCount() > 0) {
-                        Chip firstChip = (Chip) chipGroup.getChildAt(0);
-                        firstChip.setChecked(true);
-                    }
-                } else {
-                    // When searching, clear all chips
-                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
-                        Chip chip = (Chip) chipGroup.getChildAt(i);
-                        chip.setChecked(false);
-                    }
-                }
-                adapter.getFilter().filter(newText);
-                return true;
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
-    private void clearAllChips() {
-        // This method clears all chips
-        for (int i = 0; i < chipGroup.getChildCount(); i++) {
-            Chip chip = (Chip) chipGroup.getChildAt(i);
-            chip.setChecked(false);
+    private void filterByCategory(String category) {
+        showSearchProgress();
+        
+        new Handler().postDelayed(() -> {
+            serviceList.clear();
+            if (category.equals("All")) {
+                serviceList.addAll(serviceListFull);
+            } else {
+                for (Service item : serviceListFull) {
+                    if (item.getCategory().equals(category)) {
+                        serviceList.add(item);
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged();
+            updateEmptyState();
+            hideSearchProgress();
+        }, 200);
+    }
+
+    private void filterBySearch(String searchText) {
+        showSearchProgress();
+        
+        new Handler().postDelayed(() -> {
+            serviceList.clear();
+            if (searchText.isEmpty()) {
+                serviceList.addAll(serviceListFull);
+            } else {
+                String query = searchText.toLowerCase();
+                for (Service item : serviceListFull) {
+                    if (item.getName().toLowerCase().contains(query) ||
+                        item.getCategory().toLowerCase().contains(query)) {
+                        serviceList.add(item);
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged();
+            updateEmptyState();
+            hideSearchProgress();
+        }, 200);
+    }
+
+    private void showLoadingState() {
+        loadingState.setVisibility(View.VISIBLE);
+        recyclerServices.setVisibility(View.GONE);
+        emptyState.setVisibility(View.GONE);
+    }
+
+    private void hideLoadingState() {
+        loadingState.setVisibility(View.GONE);
+        recyclerServices.setVisibility(View.VISIBLE);
+        updateEmptyState();
+    }
+
+    private void showSearchProgress() {
+        searchProgress.setVisibility(View.VISIBLE);
+        clearSearch.setVisibility(View.GONE);
+    }
+
+    private void hideSearchProgress() {
+        searchProgress.setVisibility(View.GONE);
+        if (searchView.getText().length() > 0) {
+            clearSearch.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateEmptyState() {
+        if (serviceList.isEmpty()) {
+            emptyState.setVisibility(View.VISIBLE);
+            recyclerServices.setVisibility(View.GONE);
+        } else {
+            emptyState.setVisibility(View.GONE);
+            recyclerServices.setVisibility(View.VISIBLE);
         }
     }
 
     private void loadDummyServices() {
-        // Create some service providers
         Service.ServiceProvider cleanPro = new Service.ServiceProvider(
             "CleanPro Services", 
             "Professional cleaning service with 5+ years of experience.",
@@ -177,68 +246,28 @@ public class ServiceFragment extends Fragment {
             R.drawable.ic_launcher_foreground
         );
 
-        // Using local drawable resources for images with specific providers
         serviceList.add(new Service("Premium Bathroom Cleaning", "Bathroom", "1900", 
             "Deep cleaning for bathroom with sanitization and mold removal.", 
-            R.drawable.ic_bathroom,
-            cleanPro));
+            R.drawable.ic_bathroom, cleanPro));
             
         serviceList.add(new Service("Kitchen Regular Cleaning", "Kitchen", "699", 
             "Basic regular cleaning for kitchen including countertops and appliances.", 
-            R.drawable.ic_kitchen,
-            homeCare));
+            R.drawable.ic_kitchen, homeCare));
             
         serviceList.add(new Service("Floor Deep Cleaning", "Floor", "2800", 
             "Complete floor deep cleaning for all types of flooring.", 
-            R.drawable.ic_floor,
-            freshNShine));
+            R.drawable.ic_floor, freshNShine));
             
         serviceList.add(new Service("Full Window Cleaning", "Window", "1000", 
             "Professional cleaning for standard windows, inside and out.", 
-            R.drawable.ic_window,
-            cleanPro));
+            R.drawable.ic_window, cleanPro));
             
         serviceList.add(new Service("Kitchen Deep Cleaning", "Kitchen", "1299", 
             "Thorough deep cleaning including cabinets, oven, and hard-to-reach areas.", 
-            R.drawable.ic_kitchen,
-            homeCare));
+            R.drawable.ic_kitchen, homeCare));
             
         serviceList.add(new Service("Bathroom Deep Clean", "Bathroom", "2200", 
             "Intensive bathroom cleaning with grout and tile treatment.", 
-            R.drawable.ic_bathroom,
-            freshNShine));
-            
-        serviceList.add(new Service("Kitchen Premium Cleaning", "Kitchen", "1599", 
-            "Premium kitchen cleaning with appliance deep clean and organization.", 
-            R.drawable.ic_kitchen,
-            cleanPro));
-            
-        serviceList.add(new Service("Hardwood Floor Care", "Floor", "3500", 
-            "Specialized cleaning and polishing for hardwood floors.", 
-            R.drawable.ic_floor,
-            homeCare));
-            
-        serviceList.add(new Service("Carpet Deep Cleaning", "Floor", "2500", 
-            "Steam cleaning and stain removal for carpets.", 
-            R.drawable.ic_floor,
-            freshNShine));
-            
-        serviceList.add(new Service("Window Track Cleaning", "Window", "1500", 
-            "Detailed cleaning of window tracks and sills.", 
-            R.drawable.ic_window,
-            cleanPro));
-            
-        serviceList.add(new Service("Marble Floor Polishing", "Floor", "4500", 
-            "Professional polishing and sealing for marble floors.", 
-            R.drawable.ic_floor,
-            homeCare));
-            
-        serviceList.add(new Service("Skylight Cleaning", "Window", "2000", 
-            "Specialized cleaning for hard-to-reach skylights.", 
-            R.drawable.ic_window));
-            
-        serviceList.add(new Service("Glass Partition Cleaning", "Glass", "1800", 
-            "Streak-free cleaning for glass partitions and doors.", 
-            R.drawable.ic_glass));
+            R.drawable.ic_bathroom, freshNShine));
     }
 }

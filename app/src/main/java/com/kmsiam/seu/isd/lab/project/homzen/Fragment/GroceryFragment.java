@@ -1,12 +1,17 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,199 +21,208 @@ import com.google.android.material.chip.ChipGroup;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.GroceryAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
-import com.kmsiam.seu.isd.lab.project.homzen.Utils.ChipUtils;
 
 import java.util.ArrayList;
 
 public class GroceryFragment extends Fragment {
-    View groceryView;
     RecyclerView groceryRecyclerView;
-    ArrayList<Grocery> arrGrocery ;
+    ArrayList<Grocery> arrGrocery;
+    ArrayList<Grocery> arrGroceryFull;
     GroceryAdapter groceryAdapter;
-    SearchView searchView;
-    private ChipGroup chipGroup;
-
-    public GroceryFragment() {
-        // Required empty public constructor
-    }
+    EditText searchView;
+    ChipGroup chipGroup;
+    ImageView clearSearch;
+    ProgressBar searchProgress;
+    LinearLayout emptyState, loadingState;
+    
+    private boolean isChipClicked = false;
+    private Handler searchHandler = new Handler();
+    private Runnable searchRunnable;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        groceryView = inflater.inflate(R.layout.fragment_grocery, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_grocery, container, false);
 
         // Initialize views
-        groceryRecyclerView = groceryView.findViewById(R.id.groceryRecyclerView);
-        searchView = groceryView.findViewById(R.id.searchView);
-        chipGroup = groceryView.findViewById(R.id.chipGroup);
+        groceryRecyclerView = view.findViewById(R.id.groceryRecyclerView);
+        searchView = view.findViewById(R.id.searchView);
+        chipGroup = view.findViewById(R.id.chipGroup);
+        clearSearch = view.findViewById(R.id.clearSearch);
+        searchProgress = view.findViewById(R.id.searchProgress);
+        emptyState = view.findViewById(R.id.emptyState);
+        loadingState = view.findViewById(R.id.loadingState);
 
         // Setup RecyclerView
         groceryRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         
-        // Load data and setup adapter
+        // Load data immediately
         arrGrocery = new ArrayList<>();
         loadDummyGrocery();
+        arrGroceryFull = new ArrayList<>(arrGrocery);
         groceryAdapter = new GroceryAdapter(getContext(), arrGrocery);
         groceryRecyclerView.setAdapter(groceryAdapter);
 
-        // Setup search and chips
-        setupSearchView();
         setupChips();
+        setupSearch();
 
-        searchView.clearFocus();
-        return groceryView;
+        return view;
     }
 
-    ArrayList<Grocery> originalList = new ArrayList<>();
     private void setupChips() {
-        // Define your categories
-        String[] categories = {"Oil", "Fruits", "Vegetables", "Snacks", "Drinks"};
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("All");
         
-        // Setup chips using the utility class
-        ChipUtils.setupChips(requireContext(), chipGroup, categories, groceryAdapter.getFilter(), 
-            new ChipUtils.OnChipSelectedListener() {
-                @Override
-                public void onChipSelected(String category) {
-                    // Clear search when a chip is selected
-                    searchView.setQuery("", false);
-                    searchView.clearFocus();
-                }
-            });
-            
-        // Set up search view to clear chip selection when searching
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    // When search is cleared, select the first chip (All)
-                    if (chipGroup.getChildCount() > 0) {
-                        Chip firstChip = (Chip) chipGroup.getChildAt(0);
-                        firstChip.setChecked(true);
-                    }
-                } else {
-                    // When searching, clear all chips
-                    for (int i = 0; i < chipGroup.getChildCount(); i++) {
-                        Chip chip = (Chip) chipGroup.getChildAt(i);
-                        chip.setChecked(false);
-                    }
-                }
-                groceryAdapter.getFilter().filter(newText);
-                return true;
-            }
-        });
-    }
-
-    private void setupSearchView() {
-        // Clear search when a chip is selected
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                groceryAdapter.getFilter().filter(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    // When search is cleared, select the first chip (All)
-                    selectFirstChip();
-                } else {
-                    // When searching, clear all chips and filter by text
-                    clearAllChips();
-                    groceryAdapter.getFilter().filter(newText);
-                }
-                return false;
-            }
-        });
-    }
-    
-    private void selectFirstChip() {
-        if (chipGroup.getChildCount() > 0) {
-            // Clear any text in search view
-            searchView.setQuery("", false);
-            searchView.clearFocus();
-            
-            // Select the first chip (All)
-            Chip firstChip = (Chip) chipGroup.getChildAt(0);
-            if (!firstChip.isChecked()) {
-                firstChip.setChecked(true);
-                // Trigger the filter for All items
-                groceryAdapter.getFilter().filter("");
+        for (Grocery item : arrGroceryFull) {
+            String category = item.getCategory();
+            if (!categories.contains(category)) {
+                categories.add(category);
             }
         }
+        
+        for (int i = 0; i < categories.size(); i++) {
+            String category = categories.get(i);
+            Chip chip = new Chip(getContext());
+            chip.setText(category);
+            chip.setCheckable(true);
+            chip.setClickable(true);
+            
+            if (i == 0) {
+                chip.setChecked(true);
+            }
+            
+            chip.setOnClickListener(v -> {
+                filterByCategory(category);
+                isChipClicked = true;
+                searchView.setText("");
+            });
+            chipGroup.addView(chip);
+        }
+    }
+
+    private void setupSearch() {
+        clearSearch.setOnClickListener(v -> {
+            searchView.setText("");
+            clearSearch.setVisibility(View.GONE);
+        });
+
+        searchView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                clearSearch.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                
+                if (isChipClicked) {
+                    isChipClicked = false;
+                    return;
+                }
+                
+                for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                    ((Chip) chipGroup.getChildAt(i)).setChecked(false);
+                }
+                
+                if (searchRunnable != null) {
+                    searchHandler.removeCallbacks(searchRunnable);
+                }
+                
+                searchRunnable = () -> filterBySearch(s.toString());
+                searchHandler.postDelayed(searchRunnable, 300);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void filterByCategory(String category) {
-        if (originalList.isEmpty()) return;
+        showSearchProgress();
         
-        if (category.equals("All")) {
-            groceryAdapter.setFilteredList(new ArrayList<>(originalList));
-            return;
-        }
-        
-        ArrayList<Grocery> filteredList = new ArrayList<>();
-        for (Grocery grocery : originalList) {
-            if (grocery.getCategory().equalsIgnoreCase(category)) {
-                filteredList.add(grocery);
+        new Handler().postDelayed(() -> {
+            arrGrocery.clear();
+            if (category.equals("All")) {
+                arrGrocery.addAll(arrGroceryFull);
+            } else {
+                for (Grocery item : arrGroceryFull) {
+                    if (item.getCategory().equals(category)) {
+                        arrGrocery.add(item);
+                    }
+                }
             }
-        }
+            groceryAdapter.notifyDataSetChanged();
+            updateEmptyState();
+            hideSearchProgress();
+        }, 200);
+    }
+
+    private void filterBySearch(String searchText) {
+        showSearchProgress();
         
-        if (filteredList.isEmpty()) {
-            Toast.makeText(getContext(), "No items in " + category + " category", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(() -> {
+            arrGrocery.clear();
+            if (searchText.isEmpty()) {
+                arrGrocery.addAll(arrGroceryFull);
+            } else {
+                String query = searchText.toLowerCase();
+                for (Grocery item : arrGroceryFull) {
+                    if (item.getName().toLowerCase().contains(query) ||
+                        item.getCategory().toLowerCase().contains(query)) {
+                        arrGrocery.add(item);
+                    }
+                }
+            }
+            groceryAdapter.notifyDataSetChanged();
+            updateEmptyState();
+            hideSearchProgress();
+        }, 200);
+    }
+
+    private void showLoadingState() {
+        loadingState.setVisibility(View.VISIBLE);
+        groceryRecyclerView.setVisibility(View.GONE);
+        emptyState.setVisibility(View.GONE);
+    }
+
+    private void hideLoadingState() {
+        loadingState.setVisibility(View.GONE);
+        groceryRecyclerView.setVisibility(View.VISIBLE);
+        updateEmptyState();
+    }
+
+    private void showSearchProgress() {
+        searchProgress.setVisibility(View.VISIBLE);
+        clearSearch.setVisibility(View.GONE);
+    }
+
+    private void hideSearchProgress() {
+        searchProgress.setVisibility(View.GONE);
+        if (searchView.getText().length() > 0) {
+            clearSearch.setVisibility(View.VISIBLE);
         }
-        groceryAdapter.setFilteredList(filteredList);
     }
 
-    public void filterList(String newText) {
-        groceryAdapter.getFilter().filter(newText);
-    }
-    
-
-
-    private void clearAllChips() {
-        // This method clears all chips
-        for (int i = 0; i < chipGroup.getChildCount(); i++) {
-            Chip chip = (Chip) chipGroup.getChildAt(i);
-            chip.setChecked(false);
+    private void updateEmptyState() {
+        if (arrGrocery.isEmpty()) {
+            emptyState.setVisibility(View.VISIBLE);
+            groceryRecyclerView.setVisibility(View.GONE);
+        } else {
+            emptyState.setVisibility(View.GONE);
+            groceryRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
     private void loadDummyGrocery(){
-        // Fruits category
         arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Apple", "200"));
         arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Banana", "80"));
         arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Orange", "120"));
-
-        // Oil category
         arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Olive Oil 5 Ltr", "874"));
         arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Sunflower Oil 2 Ltr", "450"));
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Mustard Oil 1 Ltr", "250"));
-
-        // Snacks category
         arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Chips", "20"));
         arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Biscuits", "15"));
-        arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Chocolate", "50"));
-
-        // Vegetables category
         arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Potato", "30"));
         arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Tomato", "40"));
-        arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Onion", "35"));
-
-        // Drinks category
         arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "1.5L Bottle", "Cola", "90"));
         arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "1L Pack", "Orange Juice", "120"));
-        arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "500ml Can", "Energy Drink", "80"));
-        
-        // More items for testing
-        arrGrocery.add(new Grocery(R.drawable.olio_orolio_olive_oil_5_ltr, "Oil", "Par Unit", "Coconut Oil 1 Ltr", "300"));
         arrGrocery.add(new Grocery(R.drawable.fruits, "Fruits", "Per Kg", "Mango", "150"));
-        arrGrocery.add(new Grocery(R.drawable.vegetables, "Vegetables", "Per Kg", "Carrot", "60"));
-        arrGrocery.add(new Grocery(R.drawable.snacks, "Snacks", "Pack of 1", "Nuts Mix", "100"));
-        arrGrocery.add(new Grocery(R.drawable.drinks, "Drinks", "1L Bottle", "Mineral Water", "30"));
     }
 }

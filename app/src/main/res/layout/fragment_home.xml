@@ -1,14 +1,323 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surface_secondary"
+    android:fillViewport="true"
     tools:context=".Fragment.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <!-- Hero Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/hero_card"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_margin="@dimen/spacing_md"
+            app:cardCornerRadius="@dimen/radius_xl"
+            app:cardElevation="@dimen/elevation_sm"
+            app:cardBackgroundColor="@color/primary_green"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_primary"
+                android:padding="@dimen/spacing_lg">
+
+                <TextView
+                    android:id="@+id/welcome_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome to HomZen"
+                    android:textColor="@color/surface_primary"
+                    android:textSize="@dimen/text_heading"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/hero_icon" />
+
+                <TextView
+                    android:id="@+id/subtitle_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="Your one-stop solution for groceries and home services"
+                    android:textColor="@color/surface_primary"
+                    android:textSize="@dimen/text_lg"
+                    android:alpha="0.9"
+                    app:layout_constraintTop_toBottomOf="@id/welcome_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/hero_icon" />
+
+                <ImageView
+                    android:id="@+id/hero_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_app_logo_small"
+                    android:contentDescription="HomZen Logo"
+                    app:tint="@color/surface_primary"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Quick Actions Section -->
+        <TextView
+            android:id="@+id/quick_actions_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="Quick Actions"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/text_xl"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/hero_card"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Quick Action Cards -->
+        <LinearLayout
+            android:id="@+id/quick_actions_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintTop_toBottomOf="@id/quick_actions_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Grocery Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/grocery_quick_card"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/spacing_sm"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:cardElevation="@dimen/elevation_xs"
+                app:cardBackgroundColor="@color/surface_primary"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:id="@+id/grocery_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_grocery"
+                        android:contentDescription="Grocery"
+                        app:tint="@color/primary_green"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/grocery_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="Grocery"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="@dimen/text_lg"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/grocery_icon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Fresh groceries delivered"
+                        android:textColor="@color/neutral_600"
+                        android:textSize="@dimen/text_sm"
+                        app:layout_constraintTop_toBottomOf="@id/grocery_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Services Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/services_quick_card"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:cardElevation="@dimen/elevation_xs"
+                app:cardBackgroundColor="@color/surface_primary"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:id="@+id/services_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_service"
+                        android:contentDescription="Services"
+                        app:tint="@color/secondary_orange"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/services_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="Services"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="@dimen/text_lg"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/services_icon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Professional home services"
+                        android:textColor="@color/neutral_600"
+                        android:textSize="@dimen/text_sm"
+                        app:layout_constraintTop_toBottomOf="@id/services_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <!-- Features Section -->
+        <TextView
+            android:id="@+id/features_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="Why Choose HomZen?"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/text_xl"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/quick_actions_container"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Feature Items -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:layout_marginBottom="@dimen/spacing_xl"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/features_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Feature 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_md"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home"
+                    android:contentDescription="Fast Delivery"
+                    app:tint="@color/primary_green" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:text="Fast and Reliable Delivery"
+                    android:textColor="@color/neutral_800"
+                    android:textSize="@dimen/text_md" />
+
+            </LinearLayout>
+
+            <!-- Feature 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_md"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_service"
+                    android:contentDescription="Professional Services"
+                    app:tint="@color/secondary_orange" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:text="Professional Service Providers"
+                    android:textColor="@color/neutral_800"
+                    android:textSize="@dimen/text_md" />
+
+            </LinearLayout>
+
+            <!-- Feature 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_grocery"
+                    android:contentDescription="Fresh Products"
+                    app:tint="@color/accent_blue" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:text="Fresh and Quality Products"
+                    android:textColor="@color/neutral_800"
+                    android:textSize="@dimen/text_md" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

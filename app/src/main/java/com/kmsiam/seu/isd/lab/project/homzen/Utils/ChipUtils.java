@@ -1,14 +1,13 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Utils;
 
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Filter;
 
-import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.kmsiam.seu.isd.lab.project.homzen.R;
 
 public class ChipUtils {
     
@@ -16,65 +15,71 @@ public class ChipUtils {
         void onChipSelected(String category);
     }
     
-    public static void setupChips(@NonNull Context context, 
-                                @NonNull ChipGroup chipGroup, 
-                                @NonNull String[] categories, 
-                                @NonNull Filter filter,
-                                @NonNull OnChipSelectedListener listener) {
-        
-        // Clear existing chips and set single selection mode
+    public static void setupChips(Context context, ChipGroup chipGroup, String[] categories, 
+                                Filter filter, OnChipSelectedListener listener) {
         chipGroup.removeAllViews();
-        chipGroup.setSingleSelection(true);
         
         // Add "All" chip first
-        Chip allChip = createChip(context, "All", true);
-        allChip.setOnClickListener(v -> {
-            clearChipSelections(chipGroup);
-            allChip.setChecked(true);
-            filter.filter("");
-            listener.onChipSelected("");
-        });
+        Chip allChip = createModernChip(context, "All");
+        allChip.setChecked(true);
         chipGroup.addView(allChip);
         
         // Add category chips
         for (String category : categories) {
-            Chip chip = createChip(context, category, false);
-            chip.setOnClickListener(v -> {
-                clearChipSelections(chipGroup);
-                chip.setChecked(true);
-                filter.filter(category);
-                listener.onChipSelected(category);
-            });
+            Chip chip = createModernChip(context, category);
             chipGroup.addView(chip);
         }
         
-        // Trigger initial filter for All
-        filter.filter("");
+        // Set up chip selection listener
+        chipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (!checkedIds.isEmpty()) {
+                int checkedId = checkedIds.get(0);
+                Chip checkedChip = group.findViewById(checkedId);
+                if (checkedChip != null) {
+                    String selectedCategory = checkedChip.getText().toString();
+                    
+                    // Apply filter
+                    if (selectedCategory.equals("All")) {
+                        filter.filter("");
+                    } else {
+                        filter.filter(selectedCategory);
+                    }
+                    
+                    // Notify listener
+                    if (listener != null) {
+                        listener.onChipSelected(selectedCategory);
+                    }
+                }
+            }
+        });
     }
     
-    private static Chip createChip(Context context, String text, boolean checked) {
+    private static Chip createModernChip(Context context, String text) {
         Chip chip = new Chip(context);
         chip.setText(text);
         chip.setCheckable(true);
-        chip.setClickable(true);
-        chip.setChecked(checked);
         
-        // Set layout params
-        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+        // Apply modern styling
+        chip.setChipBackgroundColorResource(R.color.chip_background_selector);
+        chip.setTextColor(ContextCompat.getColorStateList(context, R.color.chip_text_selector));
+        chip.setChipStrokeColorResource(R.color.primary_green);
+        chip.setChipStrokeWidth(context.getResources().getDimension(R.dimen.spacing_xs) / 4);
+        chip.setChipCornerRadius(context.getResources().getDimension(R.dimen.radius_xl));
+        
+        // Set padding
+        int paddingHorizontal = (int) context.getResources().getDimension(R.dimen.spacing_md);
+        int paddingVertical = (int) context.getResources().getDimension(R.dimen.spacing_sm);
+        chip.setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
+        
+        // Set margins
+        ChipGroup.LayoutParams params = new ChipGroup.LayoutParams(
+                ChipGroup.LayoutParams.WRAP_CONTENT,
+                ChipGroup.LayoutParams.WRAP_CONTENT
         );
-        int margin = (int) (8 * context.getResources().getDisplayMetrics().density);
-        layoutParams.setMargins(0, 0, margin, 0);
-        chip.setLayoutParams(layoutParams);
+        int margin = (int) context.getResources().getDimension(R.dimen.spacing_xs);
+        params.setMargins(margin, 0, margin, 0);
+        chip.setLayoutParams(params);
         
         return chip;
-    }
-    
-    private static void clearChipSelections(ChipGroup chipGroup) {
-        for (int i = 0; i < chipGroup.getChildCount(); i++) {
-            Chip chip = (Chip) chipGroup.getChildAt(i);
-            chip.setChecked(false);
-        }
     }
 }

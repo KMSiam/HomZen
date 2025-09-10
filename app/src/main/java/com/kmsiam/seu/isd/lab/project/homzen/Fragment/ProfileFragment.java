@@ -35,10 +35,7 @@ import com.kmsiam.seu.isd.lab.project.homzen.R;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     final static int LOCATION_PERMISSION_REQUEST = 100;

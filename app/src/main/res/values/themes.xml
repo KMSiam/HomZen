@@ -1,43 +1,106 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme -->
     <style name="Base.Theme.HomZen" parent="Theme.Material3.DayNight.NoActionBar">
-        // primary colors
-        <item name="colorPrimary">@color/lavender</item>
-        <item name="colorPrimaryVariant">@color/lavender</item>
-        <item name="colorOnPrimary">@color/white</item>
-
-        //secondary colors
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-
-        //status bar colors
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-    </style>
-
-    <style name="TransparentDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:backgroundDimEnabled">true</item>
-
-    </style>
-
-    <style name="Divider">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">1dp</item>
-        <item name="android:background">@color/divider</item>
-        <item name="android:layout_marginStart">56dp</item>
-    </style>
-
-    <style name="ThemeOverlay.CardView" parent="">
-        <item name="colorSurface">@color/white</item>
-        <item name="colorOnSurface">@color/black</item>
-    </style>
-
-    <style name="FilterChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
-        <item name="chipStrokeColor">#3F51B5</item>
-        <item name="chipBackgroundColor">@android:color/white</item>
-        <item name="chipStrokeWidth">2dp</item>
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorOnPrimary">@color/surface_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_green_50</item>
+        <item name="colorOnPrimaryContainer">@color/primary_green_dark</item>
+        
+        <!-- Secondary colors -->
+        <item name="colorSecondary">@color/secondary_orange</item>
+        <item name="colorOnSecondary">@color/surface_primary</item>
+        <item name="colorSecondaryContainer">@color/secondary_orange_light</item>
+        
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/surface_primary</item>
+        <item name="colorOnSurface">@color/neutral_900</item>
+        <item name="colorSurfaceVariant">@color/surface_secondary</item>
+        <item name="colorOnSurfaceVariant">@color/neutral_600</item>
+        
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/surface_secondary</item>
+        <item name="colorOnBackground">@color/neutral_900</item>
+        
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/surface_secondary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">@color/surface_secondary</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        
+        <!-- Material components -->
+        <item name="materialCardViewStyle">@style/Widget.HomZen.CardView</item>
+        <item name="materialButtonStyle">@style/Widget.HomZen.Button</item>
+        <item name="textInputStyle">@style/Widget.HomZen.TextInputLayout</item>
     </style>
 
     <style name="Theme.HomZen" parent="Base.Theme.HomZen" />
+
+    <!-- Custom Card Style -->
+    <style name="Widget.HomZen.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/radius_lg</item>
+        <item name="cardElevation">@dimen/elevation_xs</item>
+        <item name="cardBackgroundColor">@color/surface_primary</item>
+    </style>
+
+    <!-- Custom Button Style -->
+    <style name="Widget.HomZen.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primary_green</item>
+        <item name="android:textColor">@color/surface_primary</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Custom TextInputLayout Style -->
+    <style name="Widget.HomZen.TextInputLayout" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/neutral_50</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_md</item>
+        <item name="boxStrokeColor">@color/primary_green</item>
+        <item name="hintTextColor">@color/neutral_600</item>
+    </style>
+
+    <!-- Bottom Navigation Text Styles -->
+    <style name="BottomNavTextActive" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primary_green</item>
+    </style>
+
+    <style name="BottomNavTextInactive" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">@color/neutral_500</item>
+    </style>
+
+    <!-- Chip Styles -->
+    <style name="Widget.HomZen.Chip.Choice" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_selector</item>
+        <item name="android:textColor">@color/chip_text_selector</item>
+        <item name="chipStrokeColor">@color/primary_green</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">@dimen/radius_xl</item>
+    </style>
+
+    <!-- Divider Style -->
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/neutral_200</item>
+        <item name="android:layout_marginVertical">@dimen/spacing_sm</item>
+    </style>
+
+    <!-- Transparent Dialog Style -->
+    <style name="TransparentDialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
 </resources>

@@ -89,7 +89,7 @@ public class CartManager {
         sharedPreferences.edit().remove(CART_ITEMS_KEY).apply();
     }
 
-    private void saveCartItems(ArrayList<CartItem> cartItems) {
+    public void saveCartItems(ArrayList<CartItem> cartItems) {
         String json = gson.toJson(cartItems);
         sharedPreferences.edit().putString(CART_ITEMS_KEY, json).apply();
     }

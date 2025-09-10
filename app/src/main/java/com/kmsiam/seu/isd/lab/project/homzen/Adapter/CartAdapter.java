@@ -4,13 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.CartItem;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
@@ -25,12 +25,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public interface OnCartItemChangeListener {
         void onQuantityChanged();
-        void onItemRemoved(int position);
+        void onItemRemoved();
     }
 
-    public CartAdapter(Context context, ArrayList<CartItem> cartItems, OnCartItemChangeListener listener) {
+    public CartAdapter(Context context, ArrayList<CartItem> cartItems) {
         this.context = context;
         this.cartItems = cartItems;
+    }
+
+    public void setOnCartItemChangeListener(OnCartItemChangeListener listener) {
         this.listener = listener;
     }
 
@@ -43,8 +46,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CartItem cartItem = cartItems.get(position);
-        holder.bind(cartItem, position);
+        holder.bind(cartItems.get(position), position);
     }
 
     @Override
@@ -52,25 +54,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         return cartItems.size();
     }
 
-    public void updateItems(ArrayList<CartItem> newItems) {
-        cartItems = new ArrayList<>(newItems);
-        notifyDataSetChanged();
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView productImage;
-        private TextView productName, totalPrice, unitPrice, quantityText;
-        private ImageButton decreaseButton, increaseButton, deleteButton;
+        ImageView productImage;
+        TextView productName, productType, productPrice, totalPrice, quantityText;
+        MaterialButton decreaseButton, increaseButton, deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
+            productType = itemView.findViewById(R.id.product_type);
+            productPrice = itemView.findViewById(R.id.product_price);
             totalPrice = itemView.findViewById(R.id.total_price);
-            unitPrice = itemView.findViewById(R.id.unit_price);
             quantityText = itemView.findViewById(R.id.quantity_text);
-            decreaseButton = itemView.findViewById(R.id.decrease_button);
-            increaseButton = itemView.findViewById(R.id.increase_button);
+            decreaseButton = itemView.findViewById(R.id.decrease_quantity);
+            increaseButton = itemView.findViewById(R.id.increase_quantity);
             deleteButton = itemView.findViewById(R.id.delete_button);
         }
 
@@ -78,33 +76,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // Set product details
             productImage.setImageResource(cartItem.getGrocery().getImage());
             productName.setText(cartItem.getGrocery().getName());
+            productType.setText(cartItem.getGrocery().getType());
             
-            // Parse the price string (remove non-numeric characters except decimal point)
-            String priceStr = cartItem.getGrocery().getPrice().replaceAll("[^\\d.]", "");
-            double unitPriceValue;
-            try {
-                unitPriceValue = Double.parseDouble(priceStr);
-            } catch (NumberFormatException e) {
-                unitPriceValue = 0.0;
-            }
+            // Format and display prices
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("bn", "BD"));
+            formatter.setCurrency(java.util.Currency.getInstance("BDT"));
             
-            // Set unit price with BDT symbol and format to 2 decimal places
-            unitPrice.setText(String.format(Locale.US, "৳%.2f | Piece", unitPriceValue));
+            double unitPriceValue = Double.parseDouble(cartItem.getGrocery().getPrice());
+            double totalPriceValue = unitPriceValue * cartItem.getQuantity();
             
-            // Set quantity
+            productPrice.setText("৳" + cartItem.getGrocery().getPrice());
+            totalPrice.setText("৳" + String.format("%.0f", totalPriceValue));
             quantityText.setText(String.valueOf(cartItem.getQuantity()));
-            
-            // Set total price for this item
-            double total = cartItem.getTotalPrice();
-            totalPrice.setText(String.format("৳%.2f", total));
 
-            // Set up quantity buttons
+            // Set up quantity controls
             decreaseButton.setOnClickListener(v -> {
-                int currentQuantity = cartItem.getQuantity();
-                if (currentQuantity > 1) {
-                    cartItem.setQuantity(currentQuantity - 1);
-                    quantityText.setText(String.valueOf(cartItem.getQuantity()));
-                    totalPrice.setText(String.format("৳%.2f", cartItem.getTotalPrice()));
+                if (cartItem.getQuantity() > 1) {
+                    cartItem.setQuantity(cartItem.getQuantity() - 1);
+                    notifyItemChanged(position);
                     if (listener != null) {
                         listener.onQuantityChanged();
                     }
@@ -112,10 +101,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             });
 
             increaseButton.setOnClickListener(v -> {
-                int currentQuantity = cartItem.getQuantity();
-                cartItem.setQuantity(currentQuantity + 1);
-                quantityText.setText(String.valueOf(cartItem.getQuantity()));
-                totalPrice.setText(String.format("৳%.2f", cartItem.getTotalPrice()));
+                cartItem.setQuantity(cartItem.getQuantity() + 1);
+                notifyItemChanged(position);
                 if (listener != null) {
                     listener.onQuantityChanged();
                 }
@@ -123,13 +110,27 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             // Set up delete button
             deleteButton.setOnClickListener(v -> {
+                cartItems.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, cartItems.size());
                 if (listener != null) {
-                    int currentPosition = getAdapterPosition();
-                    if (currentPosition != RecyclerView.NO_POSITION) {
-                        listener.onItemRemoved(currentPosition);
-                    }
+                    listener.onItemRemoved();
                 }
             });
         }
+    }
+
+    public double getTotalPrice() {
+        double total = 0;
+        for (CartItem item : cartItems) {
+            double unitPrice = Double.parseDouble(item.getGrocery().getPrice());
+            total += unitPrice * item.getQuantity();
+        }
+        return total;
+    }
+
+    public void clearCart() {
+        cartItems.clear();
+        notifyDataSetChanged();
     }
 }
