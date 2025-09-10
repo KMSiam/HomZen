@@ -43,7 +43,7 @@ public class ProfileFragment extends Fragment {
 
     // Views
     ImageView userProfilePic;
-    TextView userName, userEmail;
+    TextView userName, userEmail, totalOrdersText, totalSpentText;
     Button loginButton;
     LinearLayout guestView, btnShare;
     ScrollView loggedInView;
@@ -105,6 +105,8 @@ public class ProfileFragment extends Fragment {
         userProfilePic = view.findViewById(R.id.userProfilePic);
         userName = view.findViewById(R.id.tvUserName);
         userEmail = view.findViewById(R.id.tvUserEmail);
+        totalOrdersText = view.findViewById(R.id.tvTotalOrders);
+        totalSpentText = view.findViewById(R.id.tvTotalSpent);
         loginButton = view.findViewById(R.id.login_button);
         guestView = view.findViewById(R.id.guestView);
         loggedInView = view.findViewById(R.id.loggedInView);
@@ -118,6 +120,8 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.btnChangeProfilePic).setOnClickListener(v -> pickImage());
         view.findViewById(R.id.btnEditProfile).setOnClickListener(v -> 
             editProfileLauncher.launch(new Intent(getActivity(), EditProfileActivity.class)));
+        view.findViewById(R.id.btnOrders).setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.MyOrdersActivity.class)));
         loginButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), LoginActivity.class)));
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> logoutUser());
 
@@ -202,10 +206,12 @@ public class ProfileFragment extends Fragment {
                         cachedName = document.getString("name");
                         cachedProfileImage = document.getString("profileImage");
                         applyCachedUserData();
+                        loadUserStats(); // Load stats after user data
                         isUserDataLoaded = true;
                     })
                     .addOnFailureListener(e -> {
                         // Still show email if anything fails
+                        loadUserStats(); // Still try to load stats
                         isUserDataLoaded = true; // prevent constant retries on tab reselect
                     });
 
@@ -229,6 +235,38 @@ public class ProfileFragment extends Fragment {
                 userProfilePic.setImageBitmap(decodedBitmap);
             } catch (Exception ignored) { }
         }
+    }
+    
+    private void loadUserStats() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            totalOrdersText.setText("0");
+            totalSpentText.setText("৳0");
+            return;
+        }
+        
+        db.collection("users").document(user.getUid())
+                .collection("orders")
+                .whereEqualTo("status", "Complete")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int totalOrders = queryDocumentSnapshots.size();
+                    double totalSpent = 0.0;
+                    
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Double orderTotal = document.getDouble("total");
+                        if (orderTotal != null) {
+                            totalSpent += orderTotal;
+                        }
+                    }
+                    
+                    totalOrdersText.setText(String.valueOf(totalOrders));
+                    totalSpentText.setText("৳" + String.format("%.0f", totalSpent));
+                })
+                .addOnFailureListener(e -> {
+                    totalOrdersText.setText("0");
+                    totalSpentText.setText("৳0");
+                });
     }
 
     private void logoutUser() {

@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.material.button.MaterialButton;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.CartAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.MainActivity;
@@ -24,6 +26,8 @@ import com.kmsiam.seu.isd.lab.project.homzen.R;
 import com.kmsiam.seu.isd.lab.project.homzen.Utils.CartManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CartFragment extends Fragment implements CartAdapter.OnCartItemChangeListener {
     private RecyclerView cartRecyclerView;
@@ -34,6 +38,9 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
     private LinearLayout emptyCartContainer, loadingState;
     private View checkoutContainer;
     private MaterialButton placeOrderButton, browseProductsButton;
+    
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     
     private static final double DELIVERY_FEE = 50.0;
 
@@ -117,9 +124,18 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
     }
 
     private void placeOrder() {
+        // Check if user is logged in first
+        if (auth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "Please login to place order", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         // Show loading on button
         placeOrderButton.setText("Placing Order...");
         placeOrderButton.setEnabled(false);
+        
+        // Save order to Firebase
+        saveOrderToFirebase();
         
         // Simulate order placement
         new Handler().postDelayed(() -> {
@@ -138,6 +154,42 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
             // Show success message
             Toast.makeText(getContext(), "Order placed successfully!", Toast.LENGTH_LONG).show();
         }, 2000);
+    }
+    
+    private void saveOrderToFirebase() {
+        String userId = auth.getCurrentUser().getUid();
+        
+        // Create order data
+        Map<String, Object> order = new HashMap<>();
+        order.put("orderId", "ORD" + System.currentTimeMillis());
+        order.put("userId", userId);
+        order.put("orderDate", new java.util.Date());
+        order.put("status", "Confirmed");
+        order.put("subtotal", calculateSubtotal());
+        order.put("deliveryFee", DELIVERY_FEE);
+        order.put("total", calculateTotal());
+        
+        // Add cart items
+        ArrayList<Map<String, Object>> orderItems = new ArrayList<>();
+        for (CartItem item : cartItems) {
+            Map<String, Object> orderItem = new HashMap<>();
+            orderItem.put("name", item.getGrocery().getName());
+            orderItem.put("price", item.getGrocery().getPrice());
+            orderItem.put("quantity", item.getQuantity());
+            orderItem.put("image", item.getGrocery().getImage());
+            orderItems.add(orderItem);
+        }
+        order.put("items", orderItems);
+        
+        // Save to Firebase with better error handling
+        db.collection("users").document(userId)
+                .collection("orders").add(order)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(getContext(), "Order saved successfully!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to save order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void updateUI() {

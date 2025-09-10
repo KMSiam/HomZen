@@ -26,6 +26,9 @@
             android:name=".Activity.EditProfileActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.MyOrdersActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ServiceDetailActivity"
             android:exported="false" />
 
