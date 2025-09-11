@@ -308,6 +308,15 @@ public class ProfileFragment extends Fragment {
         // Save cart to Firestore before logout
         saveCartBeforeLogout();
         
+        // Reset cart merge flag for next login
+        try {
+            java.lang.reflect.Field field = com.kmsiam.seu.isd.lab.project.homzen.Fragment.CartFragment.class.getDeclaredField("hasMergedOnLogin");
+            field.setAccessible(true);
+            field.setBoolean(null, false);
+        } catch (Exception e) {
+            // Silent fail
+        }
+        
         // Sign out user
         auth.signOut();
         

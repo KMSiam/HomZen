@@ -42,6 +42,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean hasLoadedFromFirestore = false;
+    private static boolean hasMergedOnLogin = false;
     
     private static final double DELIVERY_FEE = 50.0;
 
@@ -64,9 +65,10 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         setupRecyclerView();
         setupButtons();
         
-        // Only load from Firestore if local cart is empty
-        if (auth.getCurrentUser() != null && cartItems.isEmpty()) {
+        // Merge carts only once per login session
+        if (auth.getCurrentUser() != null && !hasMergedOnLogin) {
             loadAndMergeCartFromFirestore();
+            hasMergedOnLogin = true;
         } else {
             updateUI();
         }
@@ -360,6 +362,9 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         String userId = auth.getCurrentUser().getUid();
         showLoadingState();
         
+        // Save current local cart items before loading from Firestore
+        ArrayList<CartItem> localCartItems = new ArrayList<>(cartItems);
+        
         db.collection("users").document(userId)
                 .collection("cart")
                 .get()
@@ -379,15 +384,35 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
                             }
                         }
                         
-                        // Always replace local cart with Firestore cart for logged-in users
-                        if (!firestoreItems.isEmpty()) {
-                            cartItems.clear();
-                            cartItems.addAll(firestoreItems);
-                            cartManager.saveCartItems(cartItems);
-                            
-                            if (cartAdapter != null) {
-                                cartAdapter.notifyDataSetChanged();
+                        // Merge local cart with Firestore cart
+                        cartItems.clear();
+                        
+                        // Add Firestore items first
+                        cartItems.addAll(firestoreItems);
+                        
+                        // Merge local items (avoid duplicates)
+                        for (CartItem localItem : localCartItems) {
+                            boolean exists = false;
+                            for (CartItem cartItem : cartItems) {
+                                if (localItem.getGrocery().getName().equals(cartItem.getGrocery().getName())) {
+                                    // Item exists, increase quantity
+                                    cartItem.setQuantity(cartItem.getQuantity() + localItem.getQuantity());
+                                    exists = true;
+                                    break;
+                                }
                             }
+                            if (!exists) {
+                                // Add new item from local cart
+                                cartItems.add(localItem);
+                            }
+                        }
+                        
+                        // Save merged cart
+                        cartManager.saveCartItems(cartItems);
+                        saveCartToFirestore();
+                        
+                        if (cartAdapter != null) {
+                            cartAdapter.notifyDataSetChanged();
                         }
                         
                         hideLoadingState();
