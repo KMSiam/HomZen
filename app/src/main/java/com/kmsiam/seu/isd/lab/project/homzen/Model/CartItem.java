@@ -4,6 +4,10 @@ public class CartItem {
     private Grocery grocery;
     private int quantity;
 
+    // No-argument constructor required for Firestore
+    public CartItem() {
+    }
+
     public CartItem(Grocery grocery, int quantity) {
         this.grocery = grocery;
         this.quantity = quantity;

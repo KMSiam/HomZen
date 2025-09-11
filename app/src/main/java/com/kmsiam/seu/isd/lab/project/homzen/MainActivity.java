@@ -86,4 +86,12 @@ public class MainActivity extends AppCompatActivity {
         }
         ft.commit();
     }
+    
+    // Method to refresh cart when user logs in
+    public void refreshCartAfterLogin() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.FragmentContainer);
+        if (currentFragment instanceof CartFragment) {
+            ((CartFragment) currentFragment).refreshCart();
+        }
+    }
 }

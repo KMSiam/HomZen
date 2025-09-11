@@ -41,6 +41,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
     
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private boolean hasLoadedFromFirestore = false;
     
     private static final double DELIVERY_FEE = 50.0;
 
@@ -62,6 +63,13 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         // Setup immediately
         setupRecyclerView();
         setupButtons();
+        
+        // Load cart based on login state
+        if (auth.getCurrentUser() != null) {
+            loadAndMergeCartFromFirestore();
+        } else {
+            updateUI();
+        }
         
         return view;
     }
@@ -142,6 +150,9 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
             // Clear cart
             cartManager.clearCart();
             cartItems.clear();
+            
+            // Clear cart from Firestore
+            clearCartFromFirestore();
             cartAdapter.notifyDataSetChanged();
             
             // Reset button
@@ -292,6 +303,11 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
                 }
             }
             updateUI();
+            
+            // Save to Firestore if user is logged in and cart has items
+            if (auth.getCurrentUser() != null && !cartItems.isEmpty()) {
+                saveCartToFirestore();
+            }
         }
     }
 
@@ -303,6 +319,11 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         
         // Save updated cart to CartManager
         cartManager.saveCartItems(cartItems);
+        
+        // Save to Firestore for logged-in users
+        if (auth.getCurrentUser() != null) {
+            saveCartToFirestore();
+        }
     }
 
     @Override
@@ -313,13 +334,138 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         // Save updated cart to CartManager
         cartManager.saveCartItems(cartItems);
         
+        // Save to Firestore for logged-in users
+        if (auth.getCurrentUser() != null) {
+            saveCartToFirestore();
+        }
+        
         Toast.makeText(getContext(), "Item removed from cart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Don't automatically save to prevent clearing Firestore data
+        // Cart will be saved when items are actually modified
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh cart items when fragment becomes visible
+        // Just refresh UI, don't reload from Firestore
         refreshCart();
+    }
+    
+    private void loadAndMergeCartFromFirestore() {
+        String userId = auth.getCurrentUser().getUid();
+        showLoadingState();
+        
+        db.collection("users").document(userId)
+                .collection("cart")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    try {
+                        ArrayList<CartItem> firestoreItems = new ArrayList<>();
+                        
+                        // Get items from Firestore
+                        for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            try {
+                                CartItem item = document.toObject(CartItem.class);
+                                if (item != null && item.getGrocery() != null) {
+                                    firestoreItems.add(item);
+                                }
+                            } catch (Exception e) {
+                                // Skip invalid items
+                            }
+                        }
+                        
+                        // Always replace local cart with Firestore cart for logged-in users
+                        if (!firestoreItems.isEmpty()) {
+                            cartItems.clear();
+                            cartItems.addAll(firestoreItems);
+                            cartManager.saveCartItems(cartItems);
+                            
+                            if (cartAdapter != null) {
+                                cartAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        
+                        hideLoadingState();
+                    } catch (Exception e) {
+                        hideLoadingState();
+                        refreshCart();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    hideLoadingState();
+                    refreshCart();
+                });
+    }
+    
+    private void saveCartToFirestore() {
+        if (auth.getCurrentUser() == null || cartItems == null) return;
+        
+        try {
+            String userId = auth.getCurrentUser().getUid();
+            
+            // Use batch operation for efficiency
+            db.collection("users").document(userId)
+                    .collection("cart")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        try {
+                            // Use batch for atomic operations
+                            com.google.firebase.firestore.WriteBatch batch = db.batch();
+                            
+                            // Delete existing items
+                            for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                batch.delete(document.getReference());
+                            }
+                            
+                            // Add current cart items
+                            for (CartItem item : cartItems) {
+                                if (item != null && item.getGrocery() != null) {
+                                    com.google.firebase.firestore.DocumentReference newDoc = 
+                                        db.collection("users").document(userId).collection("cart").document();
+                                    batch.set(newDoc, item);
+                                }
+                            }
+                            
+                            // Commit batch
+                            batch.commit()
+                                .addOnFailureListener(e -> {
+                                    if (getContext() != null) {
+                                        Toast.makeText(getContext(), "Failed to sync cart", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            
+                        } catch (Exception e) {
+                            if (getContext() != null) {
+                                Toast.makeText(getContext(), "Cart sync error", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), "Failed to access cart data", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } catch (Exception e) {
+            // Silent fail for save operation
+        }
+    }
+    
+    private void clearCartFromFirestore() {
+        if (auth.getCurrentUser() == null) return;
+        
+        String userId = auth.getCurrentUser().getUid();
+        db.collection("users").document(userId)
+                .collection("cart")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete();
+                    }
+                });
     }
 }

@@ -20,6 +20,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
@@ -28,6 +30,8 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.CartManager;
+import com.kmsiam.seu.isd.lab.project.homzen.Model.CartItem;
 import com.kmsiam.seu.isd.lab.project.homzen.Activity.EditProfileActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Activity.LoginActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
@@ -301,10 +305,63 @@ public class ProfileFragment extends Fragment {
     }
 
     private void logoutUser() {
+        // Save cart to Firestore before logout
+        saveCartBeforeLogout();
+        
+        // Sign out user
         auth.signOut();
+        
+        // Clear local cart after logout
+        clearLocalCart();
+        
         updateUI();
         startActivity(new Intent(getActivity(), LoginActivity.class));
         requireActivity().finish();
+    }
+    
+    private void saveCartBeforeLogout() {
+        if (auth.getCurrentUser() == null) return;
+        
+        try {
+            // Get cart items from CartManager
+            CartManager cartManager = new CartManager(getContext());
+            ArrayList<CartItem> cartItems = cartManager.getCartItems();
+            
+            if (cartItems != null && !cartItems.isEmpty()) {
+                String userId = auth.getCurrentUser().getUid();
+                
+                // Clear existing cart in Firestore first
+                db.collection("users").document(userId)
+                        .collection("cart")
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            // Delete existing items
+                            for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                document.getReference().delete();
+                            }
+                            
+                            // Add current cart items
+                            for (CartItem item : cartItems) {
+                                if (item != null && item.getGrocery() != null) {
+                                    db.collection("users").document(userId)
+                                            .collection("cart")
+                                            .add(item);
+                                }
+                            }
+                        });
+            }
+        } catch (Exception e) {
+            // Silent fail
+        }
+    }
+    
+    private void clearLocalCart() {
+        try {
+            CartManager cartManager = new CartManager(getContext());
+            cartManager.clearCart();
+        } catch (Exception e) {
+            // Silent fail
+        }
     }
 
     // ✅ Method 1: Check Location Permission
