@@ -57,8 +57,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // Default selected item
-        btnNavigationView.setSelectedItemId(R.id.nav_Home);
+        // Check if should navigate to profile after login/signup
+        if (getIntent().getBooleanExtra("navigate_to_profile", false)) {
+            btnNavigationView.setSelectedItemId(R.id.nav_Profile);
+        } else {
+            // Default selected item
+            btnNavigationView.setSelectedItemId(R.id.nav_Home);
+        }
 
         //When back stack changes, sync the checked item to the current fragment
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {

@@ -115,7 +115,9 @@ public class SignupActivity extends AppCompatActivity {
                                         .addOnSuccessListener(unused -> {
                                             signup_progress.setVisibility(View.GONE);
                                             Toast.makeText(SignupActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                            intent.putExtra("navigate_to_profile", true);
+                                            startActivity(intent);
                                             finishAffinity();
                                         })
                                         .addOnFailureListener(e -> {
@@ -139,6 +141,15 @@ public class SignupActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+        
+        // Add guest access option
+        TextView guestAccessText = findViewById(R.id.guestAccessText);
+        if (guestAccessText != null) {
+            guestAccessText.setOnClickListener(v -> {
+                startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                finish();
+            });
+        }
 
     }
 }

@@ -72,7 +72,9 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("navigate_to_profile", true);
+                        startActivity(intent);
                         finish();
                     } else {
                         Toast.makeText(LoginActivity.this, "Login Credential Doesn't Match!", Toast.LENGTH_SHORT).show();
@@ -139,6 +141,15 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(LoginActivity.this, SignupActivity.class));
             finish();
         });
+        
+        // Add guest access option
+        TextView guestAccessText = findViewById(R.id.guestAccessText);
+        if (guestAccessText != null) {
+            guestAccessText.setOnClickListener(v -> {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            });
+        }
     }
 
     public Boolean loginCredential() {

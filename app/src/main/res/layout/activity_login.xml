@@ -215,7 +215,24 @@
                         android:text="Don't have an account? Sign Up"
                         android:textColor="@color/lavender"
                         android:textSize="18sp" />
-
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="4dp"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
+                        android:layout_gravity="center_horizontal">
+                        <TextView
+                            android:id="@+id/guestAccessText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:text="Continue as Guest"
+                            android:textColor="#4CAF50"
+                            android:textSize="16sp"/>
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
