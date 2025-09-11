@@ -64,8 +64,8 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         setupRecyclerView();
         setupButtons();
         
-        // Load cart based on login state
-        if (auth.getCurrentUser() != null) {
+        // Only load from Firestore if local cart is empty
+        if (auth.getCurrentUser() != null && cartItems.isEmpty()) {
             loadAndMergeCartFromFirestore();
         } else {
             updateUI();
@@ -304,8 +304,8 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
             }
             updateUI();
             
-            // Save to Firestore if user is logged in and cart has items
-            if (auth.getCurrentUser() != null && !cartItems.isEmpty()) {
+            // Save to Firestore if user is logged in
+            if (auth.getCurrentUser() != null) {
                 saveCartToFirestore();
             }
         }
