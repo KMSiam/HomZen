@@ -69,42 +69,41 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxCornerRadiusBottomEnd="16dp"
-                        app:boxCornerRadiusTopEnd="16dp">
+                        app:boxStrokeColor="#4CAF50"
+                        app:hintTextColor="#4CAF50"
+                        android:layout_marginBottom="16dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/login_email"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:autofillHints="emailAddress"
-                            android:layout_marginTop="15dp"
                             android:inputType="textEmailAddress"
-                            android:padding="8dp"
-                            android:hint="Email"
+                            android:hint="Email Address"
                             android:drawableStart="@drawable/ic_email"
-                            android:drawablePadding="8dp"
-                            android:textColor="@color/black"/>
+                            android:drawablePadding="12dp"
+                            android:textSize="16sp"
+                            android:padding="16dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxCornerRadiusBottomEnd="16dp"
-                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxStrokeColor="#4CAF50"
+                        app:hintTextColor="#4CAF50"
                         app:passwordToggleEnabled="true"
-                        app:passwordToggleTint="@color/text_secondary">
+                        app:passwordToggleTint="#4CAF50"
+                        android:layout_marginBottom="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/login_password"
                             android:hint="Password"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:autofillHints="password"
-                            android:layout_marginTop="15dp"
                             android:inputType="textPassword"
-                            android:padding="8dp"
-                            android:textColorHint="@color/purple_200"
                             android:drawableStart="@drawable/ic_lock"
-                            android:drawablePadding="8dp"
-                            android:textColor="@color/black"/>
+                            android:drawablePadding="12dp"
+                            android:textSize="16sp"
+                            android:padding="16dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ProgressBar
