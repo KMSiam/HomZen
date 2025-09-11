@@ -85,8 +85,11 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButtonText.setOnClickListener(v -> {
             Dialog forgetPasswordDialog = new Dialog(LoginActivity.this, R.style.TransparentDialog);
             forgetPasswordDialog.setContentView(R.layout.forgate_password_dialog);
-            forgetPasswordEmail = forgetPasswordDialog.findViewById(R.id.forget_password_dialog_email);
-            forgetPasswordButton = forgetPasswordDialog.findViewById(R.id.forget_password_dialog_button);
+            forgetPasswordEmail = forgetPasswordDialog.findViewById(R.id.reset_email);
+            forgetPasswordButton = forgetPasswordDialog.findViewById(R.id.btn_reset);
+            Button cancelButton = forgetPasswordDialog.findViewById(R.id.btn_cancel);
+            
+            cancelButton.setOnClickListener(view -> forgetPasswordDialog.dismiss());
 
             forgetPasswordButton.setOnClickListener(v1 -> {
                 String forgetEmail = Objects.requireNonNull(forgetPasswordEmail.getText()).toString().trim();
@@ -142,15 +145,27 @@ public class LoginActivity extends AppCompatActivity {
         String valEmail = Objects.requireNonNull(loginEmail.getText()).toString().trim();
         String valPass = Objects.requireNonNull(loginPassword.getText()).toString().trim();
 
-        if (valEmail.isEmpty() || valPass.isEmpty()) {
-            loginEmail.setError("Email cannot be empty");
-            loginPassword.setError("Password cannot be empty");
+        if (valEmail.isEmpty()) {
+            loginEmail.setError("Email is required");
             return false;
-        } else {
-            loginEmail.setError(null);
-            loginPassword.setError(null);
-            return true;
-        }
+        } else loginEmail.setError(null);
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(valEmail).matches()) {
+            loginEmail.setError("Enter a valid email address");
+            return false;
+        } else loginEmail.setError(null);
+
+        if (valPass.isEmpty()) {
+            loginPassword.setError("Password is required");
+            return false;
+        } else loginPassword.setError(null);
+
+        if (valPass.length() < 6) {
+            loginPassword.setError("Password must be at least 6 characters");
+            return false;
+        } else loginPassword.setError(null);
+
+        return true;
     }
 
 }

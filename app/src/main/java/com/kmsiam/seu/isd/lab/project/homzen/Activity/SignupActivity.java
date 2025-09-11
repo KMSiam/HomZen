@@ -84,7 +84,7 @@ public class SignupActivity extends AppCompatActivity {
             if (password.length() < 6) {
                 signupPassword.setError("Password must be at least 6 characters");
                 return;
-            }signupPassword.setError(null);
+            } else signupPassword.setError(null);
 
             if (TextUtils.isEmpty(confirmPassword)) {
                 signup_confirm_password.setError("Re-enter Password");
@@ -99,56 +99,36 @@ public class SignupActivity extends AppCompatActivity {
                 signupButton.setEnabled(false);
                 signup_progress.setVisibility(View.VISIBLE);
 
-                // Check if email exists in Firestore
-                firestore.collection("users")
-                        .whereEqualTo("email", email)
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                if (task.getResult().isEmpty()) {
-                                    // Email doesn't exist, proceed with registration
-                                    mAuth.createUserWithEmailAndPassword(email, password)
-                                            .addOnCompleteListener(createUserTask -> {
-                                                if (createUserTask.isSuccessful()) {
-                                                    // User created successfully, now save additional user data
-                                                    assert mAuth.getCurrentUser() != null;
-                                                    String uid = mAuth.getCurrentUser().getUid();
-                                                    Map<String, Object> user = new HashMap<>();
-                                                    user.put("name", name);
-                                                    user.put("email", email);
+                // Create user with Firebase Auth
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(createUserTask -> {
+                            if (createUserTask.isSuccessful()) {
+                                // User created successfully, now save additional user data
+                                assert mAuth.getCurrentUser() != null;
+                                String uid = mAuth.getCurrentUser().getUid();
+                                Map<String, Object> user = new HashMap<>();
+                                user.put("name", name);
+                                user.put("email", email);
 
-                                                    firestore.collection("users").document(uid)
-                                                            .set(user)
-                                                            .addOnSuccessListener(unused -> {
-                                                                signup_progress.setVisibility(View.GONE);
-                                                                Toast.makeText(SignupActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                                                                startActivity(new Intent(SignupActivity.this, MainActivity.class));
-                                                                finishAffinity();
-                                                            })
-                                                            .addOnFailureListener(e -> {
-                                                                signupButton.setEnabled(true);
-                                                                signup_progress.setVisibility(View.GONE);
-                                                                Toast.makeText(SignupActivity.this, "Error saving user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                            });
-                                                } else {
-                                                    signupButton.setEnabled(true);
-                                                    signup_progress.setVisibility(View.GONE);
-                                                    String error = createUserTask.getException() != null ?
-                                                            createUserTask.getException().getMessage() : "Registration failed";
-                                                    Toast.makeText(SignupActivity.this, error, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                } else {
-                                    // Email already exists
-                                    signupButton.setEnabled(true);
-                                    signup_progress.setVisibility(View.GONE);
-                                    signupEmail.setError("This email is already registered");
-                                }
+                                firestore.collection("users").document(uid)
+                                        .set(user)
+                                        .addOnSuccessListener(unused -> {
+                                            signup_progress.setVisibility(View.GONE);
+                                            Toast.makeText(SignupActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                            finishAffinity();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            signupButton.setEnabled(true);
+                                            signup_progress.setVisibility(View.GONE);
+                                            Toast.makeText(SignupActivity.this, "Error saving user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        });
                             } else {
-                                // Error checking email
                                 signupButton.setEnabled(true);
                                 signup_progress.setVisibility(View.GONE);
-                                Toast.makeText(SignupActivity.this, "Error checking email: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                                String error = createUserTask.getException() != null ?
+                                        createUserTask.getException().getMessage() : "Registration failed";
+                                Toast.makeText(SignupActivity.this, error, Toast.LENGTH_SHORT).show();
                             }
                         });
             }
