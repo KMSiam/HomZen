@@ -47,6 +47,14 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.totalAmount.setText("৳" + String.format("%.0f", booking.getTotalAmount()));
         holder.status.setText(booking.getStatus());
         
+        // Show service address
+        String address = booking.getServiceAddress();
+        if (address != null && !address.trim().isEmpty()) {
+            holder.serviceAddress.setText(address);
+        } else {
+            holder.serviceAddress.setText("Home Service");
+        }
+        
         // Set status color
         if ("Confirmed".equals(booking.getStatus())) {
             holder.status.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
@@ -66,7 +74,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
     
     static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView bookingId, serviceName, providerName, bookingDateTime, createdDate, duration, totalAmount, status;
+        TextView bookingId, serviceName, providerName, bookingDateTime, createdDate, duration, totalAmount, status, serviceAddress;
         
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -78,6 +86,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             duration = itemView.findViewById(R.id.duration);
             totalAmount = itemView.findViewById(R.id.total_amount);
             status = itemView.findViewById(R.id.booking_status);
+            serviceAddress = itemView.findViewById(R.id.service_address);
         }
     }
 }

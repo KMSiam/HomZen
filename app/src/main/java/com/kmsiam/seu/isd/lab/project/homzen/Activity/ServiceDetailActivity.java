@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -179,7 +180,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         // Book service button
         btnBookService.setOnClickListener(v -> {
             if (validateBooking()) {
-                bookService(name);
+                showBookingConfirmationDialog(name);
             }
         });
 
@@ -246,39 +247,73 @@ public class ServiceDetailActivity extends AppCompatActivity {
         return true;
     }
 
+    private void showBookingConfirmationDialog(String serviceName) {
+        double totalAmount = basePrice * quantity;
+        
+        String message = "Service: " + (serviceName != null ? serviceName : "Unknown") + 
+                        "\nDuration: " + quantity + " hours" +
+                        "\nDate: " + selectedDate +
+                        "\nTime: " + selectedTime +
+                        "\nTotal: ৳" + String.format("%.0f", totalAmount);
+        
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm Booking")
+                .setMessage(message)
+                .setPositiveButton("Book Now", (dialog, which) -> {
+                    bookService(serviceName);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     private void bookService(String serviceName) {
         double totalAmount = basePrice * quantity;
         String userId = auth.getCurrentUser().getUid();
         
-        // Create booking data
-        Map<String, Object> booking = new HashMap<>();
-        booking.put("bookingId", "BKG" + System.currentTimeMillis());
-        booking.put("userId", userId);
-        booking.put("serviceName", serviceName != null ? serviceName : "Unknown Service");
-        booking.put("providerName", getIntent().getStringExtra("providerName"));
-        booking.put("duration", quantity);
-        booking.put("pricePerHour", basePrice);
-        booking.put("totalAmount", totalAmount);
-        booking.put("bookingDate", selectedDate);
-        booking.put("bookingTime", selectedTime);
-        booking.put("createdDate", new Date());
-        booking.put("status", "Confirmed");
-        
-        // Save to Firebase
-        db.collection("users").document(userId)
-                .collection("bookings").add(booking)
-                .addOnSuccessListener(documentReference -> {
-                    String bookingDetails = "Service: " + (serviceName != null ? serviceName : "Unknown") + 
-                                           "\nDuration: " + quantity + " hours" +
-                                           "\nDate: " + selectedDate +
-                                           "\nTime: " + selectedTime +
-                                           "\nTotal: ৳" + String.format("%.0f", totalAmount);
+        // First get user's address, then create booking
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(userDoc -> {
+                    String serviceAddress = userDoc.getString("address");
+                    if (serviceAddress == null || serviceAddress.trim().isEmpty()) {
+                        serviceAddress = "Home Service"; // fallback
+                    }
                     
-                    Toast.makeText(this, "Booking Confirmed!\n" + bookingDetails, Toast.LENGTH_LONG).show();
-                    finish();
+                    // Create booking data
+                    Map<String, Object> booking = new HashMap<>();
+                    booking.put("bookingId", "BKG" + System.currentTimeMillis());
+                    booking.put("userId", userId);
+                    booking.put("serviceName", serviceName != null ? serviceName : "Unknown Service");
+                    booking.put("providerName", getIntent().getStringExtra("providerName"));
+                    booking.put("duration", quantity);
+                    booking.put("pricePerHour", basePrice);
+                    booking.put("totalAmount", totalAmount);
+                    booking.put("bookingDate", selectedDate);
+                    booking.put("bookingTime", selectedTime);
+                    booking.put("createdDate", new Date());
+                    booking.put("status", "Confirmed");
+                    booking.put("serviceAddress", serviceAddress); // Add service address
+                    booking.put("providerPhone", getIntent().getStringExtra("providerPhone"));
+                    booking.put("providerEmail", getIntent().getStringExtra("providerEmail"));
+                    
+                    // Save to Firebase
+                    db.collection("users").document(userId)
+                            .collection("bookings").add(booking)
+                            .addOnSuccessListener(documentReference -> {
+                                String bookingDetails = "Service: " + (serviceName != null ? serviceName : "Unknown") + 
+                                                       "\nDuration: " + quantity + " hours" +
+                                                       "\nDate: " + selectedDate +
+                                                       "\nTime: " + selectedTime +
+                                                       "\nTotal: ৳" + String.format("%.0f", totalAmount);
+                                
+                                Toast.makeText(this, "Booking Confirmed!\n" + bookingDetails, Toast.LENGTH_LONG).show();
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Booking failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Booking failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to get user address", Toast.LENGTH_SHORT).show();
                 });
     }
 }

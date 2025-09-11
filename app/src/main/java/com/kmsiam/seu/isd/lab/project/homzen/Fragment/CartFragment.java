@@ -159,36 +159,49 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
     private void saveOrderToFirebase() {
         String userId = auth.getCurrentUser().getUid();
         
-        // Create order data
-        Map<String, Object> order = new HashMap<>();
-        order.put("orderId", "ORD" + System.currentTimeMillis());
-        order.put("userId", userId);
-        order.put("orderDate", new java.util.Date());
-        order.put("status", "Confirmed");
-        order.put("subtotal", calculateSubtotal());
-        order.put("deliveryFee", DELIVERY_FEE);
-        order.put("total", calculateTotal());
-        
-        // Add cart items
-        ArrayList<Map<String, Object>> orderItems = new ArrayList<>();
-        for (CartItem item : cartItems) {
-            Map<String, Object> orderItem = new HashMap<>();
-            orderItem.put("name", item.getGrocery().getName());
-            orderItem.put("price", item.getGrocery().getPrice());
-            orderItem.put("quantity", item.getQuantity());
-            orderItem.put("image", item.getGrocery().getImage());
-            orderItems.add(orderItem);
-        }
-        order.put("items", orderItems);
-        
-        // Save to Firebase with better error handling
-        db.collection("users").document(userId)
-                .collection("orders").add(order)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(getContext(), "Order saved successfully!", Toast.LENGTH_SHORT).show();
+        // First get user's address, then create order
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(userDoc -> {
+                    String deliveryAddress = userDoc.getString("address");
+                    if (deliveryAddress == null || deliveryAddress.trim().isEmpty()) {
+                        deliveryAddress = "Home Delivery"; // fallback
+                    }
+                    
+                    // Create order data
+                    Map<String, Object> order = new HashMap<>();
+                    order.put("orderId", "ORD" + System.currentTimeMillis());
+                    order.put("userId", userId);
+                    order.put("orderDate", new java.util.Date());
+                    order.put("status", "Confirmed");
+                    order.put("subtotal", calculateSubtotal());
+                    order.put("deliveryFee", DELIVERY_FEE);
+                    order.put("total", calculateTotal());
+                    order.put("deliveryAddress", deliveryAddress); // Add delivery address
+                    
+                    // Add cart items
+                    ArrayList<Map<String, Object>> orderItems = new ArrayList<>();
+                    for (CartItem item : cartItems) {
+                        Map<String, Object> orderItem = new HashMap<>();
+                        orderItem.put("name", item.getGrocery().getName());
+                        orderItem.put("price", item.getGrocery().getPrice());
+                        orderItem.put("quantity", item.getQuantity());
+                        orderItem.put("image", item.getGrocery().getImage());
+                        orderItems.add(orderItem);
+                    }
+                    order.put("items", orderItems);
+                    
+                    // Save to Firebase with better error handling
+                    db.collection("users").document(userId)
+                            .collection("orders").add(order)
+                            .addOnSuccessListener(documentReference -> {
+                                Toast.makeText(getContext(), "Order saved successfully!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Failed to save order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Failed to save order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to get user address", Toast.LENGTH_SHORT).show();
                 });
     }
 

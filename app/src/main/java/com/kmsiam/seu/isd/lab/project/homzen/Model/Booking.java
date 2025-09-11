@@ -13,6 +13,9 @@ public class Booking {
     private String bookingTime;
     private Date createdDate;
     private String status;
+    private String serviceAddress;
+    private String providerPhone;
+    private String providerEmail;
     
     public Booking() {}
     
@@ -45,4 +48,13 @@ public class Booking {
     
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    
+    public String getServiceAddress() { return serviceAddress; }
+    public void setServiceAddress(String serviceAddress) { this.serviceAddress = serviceAddress; }
+    
+    public String getProviderPhone() { return providerPhone; }
+    public void setProviderPhone(String providerPhone) { this.providerPhone = providerPhone; }
+    
+    public String getProviderEmail() { return providerEmail; }
+    public void setProviderEmail(String providerEmail) { this.providerEmail = providerEmail; }
 }

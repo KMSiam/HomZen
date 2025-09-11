@@ -110,7 +110,8 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_marginEnd="6dp"
-                        android:src="@drawable/ic_grocery" />
+                        android:src="@drawable/ic_grocery"
+                        app:tint="@color/teal_700" />
 
                     <TextView
                         android:id="@+id/item_count"
@@ -118,7 +119,7 @@
                         android:layout_height="wrap_content"
                         android:alpha="0.9"
                         android:text="3 items"
-                        android:textColor="@color/black"
+                        android:textColor="#757575"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -133,15 +134,19 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_marginEnd="6dp"
-                        android:src="@drawable/ic_my_location" />
+                        android:src="@drawable/ic_my_location"
+                        app:tint="@color/teal_700" />
 
                     <TextView
+                        android:id="@+id/delivery_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:alpha="0.9"
                         android:text="Home Delivery"
-                        android:textColor="@color/neutral_400"
-                        android:textSize="13sp" />
+                        android:textColor="#757575"
+                        android:textSize="13sp"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
                 </LinearLayout>
             </LinearLayout>
 

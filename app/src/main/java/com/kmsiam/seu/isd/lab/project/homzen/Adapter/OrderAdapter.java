@@ -47,6 +47,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         int itemCount = order.getItems() != null ? order.getItems().size() : 0;
         holder.itemCount.setText(itemCount + " items");
         
+        // Show delivery address
+        String address = order.getDeliveryAddress();
+        if (address != null && !address.trim().isEmpty()) {
+            holder.deliveryAddress.setText(address);
+        } else {
+            holder.deliveryAddress.setText("Home Delivery");
+        }
+        
         // Set status background color
         if ("Complete".equals(order.getStatus())) {
             holder.orderStatus.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
@@ -66,7 +74,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
     
     static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView orderId, orderDate, orderStatus, orderTotal, itemCount;
+        TextView orderId, orderDate, orderStatus, orderTotal, itemCount, deliveryAddress;
         
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +83,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             orderStatus = itemView.findViewById(R.id.order_status);
             orderTotal = itemView.findViewById(R.id.order_total);
             itemCount = itemView.findViewById(R.id.item_count);
+            deliveryAddress = itemView.findViewById(R.id.delivery_address);
         }
     }
 }

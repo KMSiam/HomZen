@@ -9,6 +9,7 @@ public class Order {
     private double total;
     private Date orderDate;
     private ArrayList<Object> items;
+    private String deliveryAddress;
     
     public Order() {}
     
@@ -26,4 +27,7 @@ public class Order {
     
     public ArrayList<Object> getItems() { return items; }
     public void setItems(ArrayList<Object> items) { this.items = items; }
+    
+    public String getDeliveryAddress() { return deliveryAddress; }
+    public void setDeliveryAddress(String deliveryAddress) { this.deliveryAddress = deliveryAddress; }
 }
