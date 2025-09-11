@@ -247,23 +247,52 @@ public class ProfileFragment extends Fragment {
             return;
         }
         
-        db.collection("users").document(user.getUid())
+        String userId = user.getUid();
+        
+        // Load grocery orders
+        db.collection("users").document(userId)
                 .collection("orders")
                 .whereEqualTo("status", "Complete")
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    int totalOrders = queryDocumentSnapshots.size();
-                    double totalSpent = 0.0;
+                .addOnSuccessListener(orderSnapshots -> {
+                    int groceryOrders = orderSnapshots.size();
+                    final double[] grocerySpent = {0.0};
                     
-                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : orderSnapshots) {
                         Double orderTotal = document.getDouble("total");
                         if (orderTotal != null) {
-                            totalSpent += orderTotal;
+                            grocerySpent[0] += orderTotal;
                         }
                     }
                     
-                    totalOrdersText.setText(String.valueOf(totalOrders));
-                    totalSpentText.setText("৳" + String.format("%.0f", totalSpent));
+                    // Load service bookings
+                    db.collection("users").document(userId)
+                            .collection("bookings")
+                            .whereEqualTo("status", "Complete")
+                            .get()
+                            .addOnSuccessListener(bookingSnapshots -> {
+                                int serviceBookings = bookingSnapshots.size();
+                                double serviceSpent = 0.0;
+                                
+                                for (com.google.firebase.firestore.QueryDocumentSnapshot document : bookingSnapshots) {
+                                    Double bookingTotal = document.getDouble("totalAmount");
+                                    if (bookingTotal != null) {
+                                        serviceSpent += bookingTotal;
+                                    }
+                                }
+                                
+                                // Update UI with combined totals
+                                int totalOrders = groceryOrders + serviceBookings;
+                                double totalSpent = grocerySpent[0] + serviceSpent;
+                                
+                                totalOrdersText.setText(String.valueOf(totalOrders));
+                                totalSpentText.setText("৳" + String.format("%.0f", totalSpent));
+                            })
+                            .addOnFailureListener(e -> {
+                                // Show grocery data even if bookings fail
+                                totalOrdersText.setText(String.valueOf(groceryOrders));
+                                totalSpentText.setText("৳" + String.format("%.0f", grocerySpent[0]));
+                            });
                 })
                 .addOnFailureListener(e -> {
                     totalOrdersText.setText("0");
