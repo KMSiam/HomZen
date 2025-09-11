@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -36,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -53,34 +55,47 @@ public class EditProfileActivity extends AppCompatActivity implements OnMapReady
     
     private FusedLocationProviderClient fusedLocationClient;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private ActivityResultLauncher<String> locationPermissionLauncher;
     private GoogleMap mMap;
     private Dialog locationDialog;
     private TextInputEditText etCurrentLocation;
+    private Uri selectedImageUri;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
         
-        initViews();
-        initFirebase();
-        setupImagePicker();
-        loadUserData();
-        setupClickListeners();
+        try {
+            setContentView(R.layout.activity_edit_profile);
+            
+            initViews();
+            initFirebase();
+            setupImagePicker();
+            setupLocationPermission();
+            loadUserData();
+            setupClickListeners();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error loading profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
     
     private void initViews() {
-        etName = findViewById(R.id.etName);
-        etEmail = findViewById(R.id.etEmail);
-        etPhone = findViewById(R.id.etPhone);
-        etAddress = findViewById(R.id.etAddress);
-        profileImage = findViewById(R.id.profileImage);
-        btnBack = findViewById(R.id.btnBack);
-        btnSave = findViewById(R.id.btnSave);
-        btnChangePhoto = findViewById(R.id.btnChangePhoto);
-        btnGetLocation = findViewById(R.id.btnGetLocation);
-        
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        try {
+            etName = findViewById(R.id.etName);
+            etEmail = findViewById(R.id.etEmail);
+            etPhone = findViewById(R.id.etPhone);
+            etAddress = findViewById(R.id.etAddress);
+            profileImage = findViewById(R.id.profileImage);
+            btnBack = findViewById(R.id.btnBack);
+            btnSave = findViewById(R.id.btnSave);
+            btnChangePhoto = findViewById(R.id.btnChangePhoto);
+            btnGetLocation = findViewById(R.id.btnGetLocation);
+            
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize views: " + e.getMessage());
+        }
     }
     
     private void initFirebase() {
@@ -101,10 +116,23 @@ public class EditProfileActivity extends AppCompatActivity implements OnMapReady
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri imageUri = result.getData().getData();
-                    if (imageUri != null) {
-                        profileImage.setImageURI(imageUri);
+                    selectedImageUri = result.getData().getData();
+                    if (selectedImageUri != null) {
+                        profileImage.setImageURI(selectedImageUri);
                     }
+                }
+            }
+        );
+    }
+    
+    private void setupLocationPermission() {
+        locationPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                if (isGranted) {
+                    showLocationDialog();
+                } else {
+                    Toast.makeText(this, "Location permission required for GPS feature", Toast.LENGTH_SHORT).show();
                 }
             }
         );
@@ -139,7 +167,14 @@ public class EditProfileActivity extends AppCompatActivity implements OnMapReady
             imagePickerLauncher.launch(intent);
         });
         
-        btnGetLocation.setOnClickListener(v -> showLocationDialog());
+        btnGetLocation.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED) {
+                showLocationDialog();
+            } else {
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+        });
         
         btnSave.setOnClickListener(v -> saveProfile());
     }
@@ -256,27 +291,47 @@ public class EditProfileActivity extends AppCompatActivity implements OnMapReady
         userMap.put("phone", phone);
         userMap.put("address", address);
         
-        // Convert image to base64 if changed
-        profileImage.setDrawingCacheEnabled(true);
-        profileImage.buildDrawingCache();
-        Bitmap bitmap = profileImage.getDrawingCache();
-        if (bitmap != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-            byte[] imageBytes = baos.toByteArray();
-            String imageBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-            userMap.put("profileImage", imageBase64);
+        // Handle image if selected
+        if (selectedImageUri != null) {
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                // Resize bitmap to reduce memory usage
+                bitmap = resizeBitmap(bitmap, 300, 300);
+                
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                byte[] imageBytes = baos.toByteArray();
+                String imageBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                userMap.put("profileImage", imageBase64);
+            } catch (Exception e) {
+                Toast.makeText(this, "Error processing image", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
         
         db.collection("users").document(userId)
             .set(userMap)
             .addOnSuccessListener(aVoid -> {
                 Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK); // Add this line
+                setResult(RESULT_OK);
                 finish();
             })
             .addOnFailureListener(e -> 
                 Toast.makeText(this, "Failed to update profile", Toast.LENGTH_SHORT).show()
             );
+    }
+    
+    private Bitmap resizeBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        
+        float scaleWidth = ((float) maxWidth) / width;
+        float scaleHeight = ((float) maxHeight) / height;
+        float scale = Math.min(scaleWidth, scaleHeight);
+        
+        int newWidth = Math.round(width * scale);
+        int newHeight = Math.round(height * scale);
+        
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
     }
 }

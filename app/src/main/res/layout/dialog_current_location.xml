@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="12dp">
+    app:cardElevation="12dp"
+    app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,12 +19,15 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxStrokeColor="#2196F3"
-            app:hintTextColor="#2196F3"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#4CAF50"
+            app:hintTextColor="#4CAF50"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
+            app:startIconDrawable="@drawable/ic_add_location"
+            app:startIconTint="@color/teal_700"
             android:layout_marginBottom="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -32,9 +36,10 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress"
                 android:hint="Enter your location"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:minLines="2"
-                android:maxLines="3" />
+                android:maxLines="3"
+                android:paddingVertical="16dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Map View -->
@@ -75,7 +80,7 @@
                 android:layout_height="48dp"
                 android:text="Save Location"
                 android:textAllCaps="false"
-                app:backgroundTint="#2196F3" />
+                app:backgroundTint="#4CAF50" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

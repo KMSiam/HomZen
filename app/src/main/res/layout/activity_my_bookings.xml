@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white">
-
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,19 +13,26 @@
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="@color/teal_700"
+        android:background="@color/white"
         android:elevation="4dp">
 
-        <ImageView
-            android:id="@+id/back_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="4dp"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"/>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:layout_width="0dp"
@@ -35,7 +41,7 @@
             android:text="My Bookings"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:layout_marginStart="16dp"/>
     </LinearLayout>
 
