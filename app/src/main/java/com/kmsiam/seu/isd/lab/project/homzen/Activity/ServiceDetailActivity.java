@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,7 +53,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_detail);
 
-        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
+        ImageView backButton = findViewById(R.id.back_button);
+        TextView headerTitle = findViewById(R.id.header_title);
         ImageView imgService = findViewById(R.id.imgServiceDetail);
         TextView txtTitle = findViewById(R.id.txtServiceTitle);
         TextView txtPrice = findViewById(R.id.txtServicePrice);
@@ -108,7 +108,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         int providerImageResId = getIntent().getIntExtra("providerImageResId", R.drawable.service_probider);
 
         // Set service values with null checks
-        topAppBar.setTitle(name != null ? name : "Service Details");
+        headerTitle.setText(name != null ? name : "Service Details");
         txtTitle.setText(name != null ? name : "Service");
         txtPrice.setText(price != null ? price : "৳0");
         txtDesc.setText(desc != null ? desc : "No description available");
@@ -173,7 +173,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         btnSelectTime.setOnClickListener(v -> showTimePicker());
 
         // Back button
-        topAppBar.setNavigationOnClickListener(v -> {
+        backButton.setOnClickListener(v -> {
             getOnBackPressedDispatcher().onBackPressed();
         });
 
