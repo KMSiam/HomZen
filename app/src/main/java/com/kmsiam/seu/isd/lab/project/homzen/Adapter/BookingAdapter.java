@@ -1,14 +1,17 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kmsiam.seu.isd.lab.project.homzen.Activity.BookingDetailsActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Booking;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
@@ -55,17 +58,32 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             holder.serviceAddress.setText("Home Service");
         }
         
-        // Set status color
-        if ("Confirmed".equals(booking.getStatus())) {
-            holder.status.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
-            holder.status.setTextColor(context.getResources().getColor(android.R.color.white));
-        } else if ("Complete".equals(booking.getStatus())) {
-            holder.status.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
-            holder.status.setTextColor(context.getResources().getColor(android.R.color.white));
-        } else {
-            holder.status.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
-            holder.status.setTextColor(context.getResources().getColor(android.R.color.white));
+        // Set status background color
+        switch (booking.getStatus()) {
+            case "Complete":
+                holder.status.setBackgroundColor(context.getResources().getColor(R.color.success));
+                break;
+            case "Confirmed":
+                holder.status.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
+                break;
+            case "Processing":
+                holder.status.setBackgroundColor(context.getResources().getColor(R.color.info));
+                break;
+            case "Cancelled":
+                holder.status.setBackgroundColor(context.getResources().getColor(R.color.error));
+                break;
+            default:
+                holder.status.setBackgroundColor(context.getResources().getColor(R.color.warning));
+                break;
         }
+        holder.status.setTextColor(context.getResources().getColor(android.R.color.white));
+        
+        // Set click listener only on action section
+        holder.actionSection.setOnClickListener(v -> {
+            Intent intent = new Intent(context, BookingDetailsActivity.class);
+            intent.putExtra("bookingId", booking.getBookingId());
+            context.startActivity(intent);
+        });
     }
     
     @Override
@@ -75,6 +93,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     
     static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView bookingId, serviceName, providerName, bookingDateTime, createdDate, duration, totalAmount, status, serviceAddress;
+        LinearLayout actionSection;
         
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,6 +106,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             totalAmount = itemView.findViewById(R.id.total_amount);
             status = itemView.findViewById(R.id.booking_status);
             serviceAddress = itemView.findViewById(R.id.service_address);
+            actionSection = itemView.findViewById(R.id.actionSection);
         }
     }
 }

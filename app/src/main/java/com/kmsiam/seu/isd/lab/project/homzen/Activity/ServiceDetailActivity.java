@@ -180,7 +180,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         // Book service button
         btnBookService.setOnClickListener(v -> {
             if (validateBooking()) {
-                showBookingConfirmationDialog(name);
+                bookService(name);
             }
         });
 
@@ -247,28 +247,10 @@ public class ServiceDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showBookingConfirmationDialog(String serviceName) {
-        double totalAmount = basePrice * quantity;
-        
-        String message = "Service: " + (serviceName != null ? serviceName : "Unknown") + 
-                        "\nDuration: " + quantity + " hours" +
-                        "\nDate: " + selectedDate +
-                        "\nTime: " + selectedTime +
-                        "\nTotal: ৳" + String.format("%.0f", totalAmount);
-        
-        new AlertDialog.Builder(this)
-                .setTitle("Confirm Booking")
-                .setMessage(message)
-                .setPositiveButton("Book Now", (dialog, which) -> {
-                    bookService(serviceName);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
     private void bookService(String serviceName) {
         double totalAmount = basePrice * quantity;
         String userId = auth.getCurrentUser().getUid();
+        String bookingId = "BKG" + System.currentTimeMillis();
         
         // First get user's address, then create booking
         db.collection("users").document(userId).get()
@@ -280,7 +262,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     
                     // Create booking data
                     Map<String, Object> booking = new HashMap<>();
-                    booking.put("bookingId", "BKG" + System.currentTimeMillis());
+                    booking.put("bookingId", bookingId);
                     booking.put("userId", userId);
                     booking.put("serviceName", serviceName != null ? serviceName : "Unknown Service");
                     booking.put("providerName", getIntent().getStringExtra("providerName"));
@@ -290,8 +272,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     booking.put("bookingDate", selectedDate);
                     booking.put("bookingTime", selectedTime);
                     booking.put("createdDate", new Date());
-                    booking.put("status", "Confirmed");
-                    booking.put("serviceAddress", serviceAddress); // Add service address
+                    booking.put("status", "Pending");
+                    booking.put("serviceAddress", serviceAddress);
                     booking.put("providerPhone", getIntent().getStringExtra("providerPhone"));
                     booking.put("providerEmail", getIntent().getStringExtra("providerEmail"));
                     
@@ -299,13 +281,10 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     db.collection("users").document(userId)
                             .collection("bookings").add(booking)
                             .addOnSuccessListener(documentReference -> {
-                                String bookingDetails = "Service: " + (serviceName != null ? serviceName : "Unknown") + 
-                                                       "\nDuration: " + quantity + " hours" +
-                                                       "\nDate: " + selectedDate +
-                                                       "\nTime: " + selectedTime +
-                                                       "\nTotal: ৳" + String.format("%.0f", totalAmount);
-                                
-                                Toast.makeText(this, "Booking Confirmed!\n" + bookingDetails, Toast.LENGTH_LONG).show();
+                                // Navigate to BookingDetailsActivity
+                                Intent intent = new Intent(this, BookingDetailsActivity.class);
+                                intent.putExtra("bookingId", bookingId);
+                                startActivity(intent);
                                 finish();
                             })
                             .addOnFailureListener(e -> {

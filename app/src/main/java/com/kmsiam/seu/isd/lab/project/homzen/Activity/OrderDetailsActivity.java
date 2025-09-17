@@ -260,6 +260,20 @@ public class OrderDetailsActivity extends AppCompatActivity implements OnMapRead
         orderIdText.setText(order.getOrderId());
         orderDateText.setText(dateFormat.format(order.getOrderDate()));
         orderStatusText.setText(order.getStatus());
+        
+        // Set status color
+        String status = order.getStatus();
+        if ("Complete".equals(status)) {
+            orderStatusText.setTextColor(ContextCompat.getColor(this, R.color.success));
+        } else if ("Confirmed".equals(status)) {
+            orderStatusText.setTextColor(ContextCompat.getColor(this, R.color.teal_700));
+        } else if ("Processing".equals(status)) {
+            orderStatusText.setTextColor(ContextCompat.getColor(this, R.color.info));
+        } else if ("Cancelled".equals(status)) {
+            orderStatusText.setTextColor(ContextCompat.getColor(this, R.color.error));
+        } else {
+            orderStatusText.setTextColor(ContextCompat.getColor(this, R.color.warning));
+        }
         orderTotalText.setText("৳" + String.format("%.0f", order.getTotal()));
         
         // Update button text based on order status
