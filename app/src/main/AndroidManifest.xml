@@ -28,7 +28,19 @@
             android:name=".Activity.MyOrdersActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.OrderDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.MyBookingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.PaymentMethodsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.HelpSupportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.ServiceDetailActivity"

@@ -1,6 +1,7 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.material.button.MaterialButton;
+import com.kmsiam.seu.isd.lab.project.homzen.Activity.OrderDetailsActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.CartAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.MainActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.CartItem;
@@ -103,8 +105,8 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
     }
 
     private void setupButtons() {
-        // Place order button
-        placeOrderButton.setOnClickListener(v -> showPlaceOrderDialog());
+        // Place order button - navigate directly to OrderDetailsActivity
+        placeOrderButton.setOnClickListener(v -> placeOrderDirectly());
         
         // Browse products button
         browseProductsButton.setOnClickListener(v -> {
@@ -115,22 +117,24 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
         });
     }
 
-    private void showPlaceOrderDialog() {
+    private void placeOrderDirectly() {
         if (cartItems == null || cartItems.isEmpty()) {
             Toast.makeText(getContext(), "Your cart is empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        double total = calculateTotal();
+        // Check if user is logged in first
+        if (auth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "Please login to place order", Toast.LENGTH_SHORT).show();
+            return;
+        }
         
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Confirm Order")
-                .setMessage("Place order for ৳" + String.format("%.0f", total) + "?")
-                .setPositiveButton("Place Order", (dialog, which) -> {
-                    placeOrder();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        // Show loading on button
+        placeOrderButton.setText("Placing Order...");
+        placeOrderButton.setEnabled(false);
+        
+        // Save order to Firebase and navigate to OrderDetailsActivity
+        saveOrderAndNavigate();
     }
 
     private void placeOrder() {
@@ -167,6 +171,76 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
             // Show success message
             Toast.makeText(getContext(), "Order placed successfully!", Toast.LENGTH_LONG).show();
         }, 2000);
+    }
+    
+    private void saveOrderAndNavigate() {
+        String userId = auth.getCurrentUser().getUid();
+        String orderId = "ORD" + System.currentTimeMillis();
+        
+        // First get user's address, then create order
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(userDoc -> {
+                    String deliveryAddress = userDoc.getString("address");
+                    if (deliveryAddress == null || deliveryAddress.trim().isEmpty()) {
+                        deliveryAddress = "Home Delivery"; // fallback
+                    }
+                    
+                    // Create order data
+                    Map<String, Object> order = new HashMap<>();
+                    order.put("orderId", orderId);
+                    order.put("userId", userId);
+                    order.put("orderDate", new java.util.Date());
+                    order.put("status", "Pending");
+                    order.put("subtotal", calculateSubtotal());
+                    order.put("deliveryFee", DELIVERY_FEE);
+                    order.put("total", calculateTotal());
+                    order.put("deliveryAddress", deliveryAddress);
+                    
+                    // Add cart items
+                    ArrayList<Map<String, Object>> orderItems = new ArrayList<>();
+                    for (CartItem item : cartItems) {
+                        Map<String, Object> orderItem = new HashMap<>();
+                        orderItem.put("name", item.getGrocery().getName());
+                        orderItem.put("price", item.getGrocery().getPrice());
+                        orderItem.put("quantity", item.getQuantity());
+                        orderItem.put("image", item.getGrocery().getImage());
+                        orderItems.add(orderItem);
+                    }
+                    order.put("items", orderItems);
+                    
+                    // Save to Firebase
+                    db.collection("users").document(userId)
+                            .collection("orders").add(order)
+                            .addOnSuccessListener(documentReference -> {
+                                // Clear cart
+                                cartManager.clearCart();
+                                cartItems.clear();
+                                clearCartFromFirestore();
+                                
+                                // Reset button
+                                placeOrderButton.setText("Place Order");
+                                placeOrderButton.setEnabled(true);
+                                
+                                // Navigate to OrderDetailsActivity
+                                Intent intent = new Intent(getContext(), OrderDetailsActivity.class);
+                                intent.putExtra("orderId", orderId);
+                                startActivity(intent);
+                                
+                                Toast.makeText(getContext(), "Order placed successfully!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                // Reset button on failure
+                                placeOrderButton.setText("Place Order");
+                                placeOrderButton.setEnabled(true);
+                                Toast.makeText(getContext(), "Failed to place order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    // Reset button on failure
+                    placeOrderButton.setText("Place Order");
+                    placeOrderButton.setEnabled(true);
+                    Toast.makeText(getContext(), "Failed to get user address", Toast.LENGTH_SHORT).show();
+                });
     }
     
     private void saveOrderToFirebase() {

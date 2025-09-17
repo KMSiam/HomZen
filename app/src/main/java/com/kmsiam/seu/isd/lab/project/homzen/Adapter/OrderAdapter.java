@@ -1,14 +1,17 @@
 package com.kmsiam.seu.isd.lab.project.homzen.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kmsiam.seu.isd.lab.project.homzen.Activity.OrderDetailsActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Order;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 
@@ -56,16 +59,31 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
         
         // Set status background color
-        if ("Complete".equals(order.getStatus())) {
-            holder.orderStatus.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
-            holder.orderStatus.setTextColor(context.getResources().getColor(android.R.color.white));
-        } else if ("Confirmed".equals(order.getStatus())) {
-            holder.orderStatus.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
-            holder.orderStatus.setTextColor(context.getResources().getColor(android.R.color.white));
-        } else {
-            holder.orderStatus.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
-            holder.orderStatus.setTextColor(context.getResources().getColor(android.R.color.white));
+        switch (order.getStatus()) {
+            case "Complete":
+                holder.orderStatus.setBackgroundColor(context.getResources().getColor(R.color.success));
+                break;
+            case "Confirmed":
+                holder.orderStatus.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
+                break;
+            case "Processing":
+                holder.orderStatus.setBackgroundColor(context.getResources().getColor(R.color.info));
+                break;
+            case "Cancelled":
+                holder.orderStatus.setBackgroundColor(context.getResources().getColor(R.color.error));
+                break;
+            default:
+                holder.orderStatus.setBackgroundColor(context.getResources().getColor(R.color.warning));
+                break;
         }
+        holder.orderStatus.setTextColor(context.getResources().getColor(android.R.color.white));
+        
+        // Handle click on action section
+        holder.actionSection.setOnClickListener(v -> {
+            Intent intent = new Intent(context, OrderDetailsActivity.class);
+            intent.putExtra("orderId", order.getOrderId());
+            context.startActivity(intent);
+        });
     }
     
     @Override
@@ -75,6 +93,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     
     static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView orderId, orderDate, orderStatus, orderTotal, itemCount, deliveryAddress;
+        LinearLayout actionSection;
         
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -84,6 +103,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             orderTotal = itemView.findViewById(R.id.order_total);
             itemCount = itemView.findViewById(R.id.item_count);
             deliveryAddress = itemView.findViewById(R.id.delivery_address);
+            
+            // Find the action section (the bottom LinearLayout with "Tap to view details")
+            actionSection = itemView.findViewById(R.id.actionSection);
+            if (actionSection == null) {
+                // If ID doesn't exist, find by the last LinearLayout in the card
+                ViewGroup parent = (ViewGroup) itemView;
+                if (parent.getChildCount() > 0) {
+                    ViewGroup cardContent = (ViewGroup) parent.getChildAt(0);
+                    if (cardContent.getChildCount() > 2) {
+                        actionSection = (LinearLayout) cardContent.getChildAt(cardContent.getChildCount() - 1);
+                    }
+                }
+            }
         }
     }
 }

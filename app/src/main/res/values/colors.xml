@@ -53,4 +53,7 @@
     <!-- Material Design Colors -->
     <color name="colorPrimary">@color/primary_green</color>
     <color name="colorAccent">@color/accent_blue</color>
+    
+    <!-- Additional Colors -->
+    <color name="light_gray">#F5F5F5</color>
 </resources>

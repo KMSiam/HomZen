@@ -128,6 +128,12 @@ public class ProfileFragment extends Fragment {
             startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.MyOrdersActivity.class)));
         view.findViewById(R.id.btnBookings).setOnClickListener(v -> 
             startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.MyBookingsActivity.class)));
+        view.findViewById(R.id.btnPayment).setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.PaymentMethodsActivity.class)));
+        view.findViewById(R.id.btnHelp).setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.HelpSupportActivity.class)));
+        view.findViewById(R.id.btnSettings).setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), com.kmsiam.seu.isd.lab.project.homzen.Activity.SettingsActivity.class)));
         loginButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), LoginActivity.class)));
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> logoutUser());
 
