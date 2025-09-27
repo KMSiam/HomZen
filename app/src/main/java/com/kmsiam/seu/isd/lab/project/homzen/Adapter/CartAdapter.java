@@ -16,6 +16,10 @@ import com.kmsiam.seu.isd.lab.project.homzen.R;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.ResourceValidator;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
@@ -74,7 +78,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         public void bind(CartItem cartItem, int position) {
             // Set product details
-            productImage.setImageResource(cartItem.getGrocery().getImage());
+            try {
+                int imageRes = cartItem.getGrocery().getImage();
+                // Use ResourceValidator to get a safe drawable resource
+                int safeImageRes = ResourceValidator.getSafeDrawableResource(context, imageRes, R.drawable.fruits);
+                productImage.setImageResource(safeImageRes);
+            } catch (Exception e) {
+                // Fallback to default image if there's any error
+                productImage.setImageResource(R.drawable.fruits);
+            }
             productName.setText(cartItem.getGrocery().getName());
             productType.setText(cartItem.getGrocery().getType());
             

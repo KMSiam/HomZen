@@ -21,7 +21,6 @@ public class HomeFragment extends Fragment {
     private CardView groceryQuickCard, servicesQuickCard;
 
     public HomeFragment() {
-        // Required empty public constructor
     }
 
     @Override

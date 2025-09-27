@@ -24,8 +24,10 @@ import com.kmsiam.seu.isd.lab.project.homzen.Activity.OrderDetailsActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Adapter.CartAdapter;
 import com.kmsiam.seu.isd.lab.project.homzen.MainActivity;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.CartItem;
+import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 import com.kmsiam.seu.isd.lab.project.homzen.Utils.CartManager;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.ResourceValidator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -451,6 +453,13 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
                             try {
                                 CartItem item = document.toObject(CartItem.class);
                                 if (item != null && item.getGrocery() != null) {
+                                    // Validate and fix corrupted image resources
+                                    Grocery grocery = item.getGrocery();
+                                    int imageRes = grocery.getImage();
+                                    if (!ResourceValidator.isValidDrawableResource(getContext(), imageRes)) {
+                                        // Fix corrupted image resource
+                                        grocery.setImage(R.drawable.fruits); // Set to default
+                                    }
                                     firestoreItems.add(item);
                                 }
                             } catch (Exception e) {
@@ -566,5 +575,19 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartItemChan
                         document.getReference().delete();
                     }
                 });
+    }
+    
+    // Add this method to manually clear corrupted cart data
+    public void clearCorruptedCartData() {
+        if (auth.getCurrentUser() != null) {
+            clearCartFromFirestore();
+            cartManager.clearCart();
+            cartItems.clear();
+            if (cartAdapter != null) {
+                cartAdapter.notifyDataSetChanged();
+            }
+            updateUI();
+            Toast.makeText(getContext(), "Cart cleared due to data corruption", Toast.LENGTH_SHORT).show();
+        }
     }
 }

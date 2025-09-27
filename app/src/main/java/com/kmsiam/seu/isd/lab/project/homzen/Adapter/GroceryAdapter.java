@@ -20,6 +20,7 @@ import com.google.android.material.button.MaterialButton;
 import com.kmsiam.seu.isd.lab.project.homzen.Model.Grocery;
 import com.kmsiam.seu.isd.lab.project.homzen.R;
 import com.kmsiam.seu.isd.lab.project.homzen.Utils.CartManager;
+import com.kmsiam.seu.isd.lab.project.homzen.Utils.ResourceValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,15 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Grocery grocery = arrGrocery.get(position);
         
-        holder.groceryImage.setImageResource(grocery.getImage());
+        try {
+            int imageRes = grocery.getImage();
+            // Use ResourceValidator to get a safe drawable resource
+            int safeImageRes = ResourceValidator.getSafeDrawableResource(context, imageRes, R.drawable.fruits);
+            holder.groceryImage.setImageResource(safeImageRes);
+        } catch (Exception e) {
+            // Fallback to default image if there's any error
+            holder.groceryImage.setImageResource(R.drawable.fruits);
+        }
         holder.groceryCategory.setText(grocery.getCategory());
         holder.groceryName.setText(grocery.getName());
         holder.groceryType.setText(grocery.getType());
