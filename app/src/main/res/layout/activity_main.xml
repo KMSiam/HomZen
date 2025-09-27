@@ -44,7 +44,7 @@
             app:itemIconTint="@color/nav_item_color"
             app:itemTextColor="@color/nav_item_color"
             app:itemIconSize="24dp"
-            app:labelVisibilityMode="labeled" />
+            app:labelVisibilityMode="auto" />
 
     </androidx.cardview.widget.CardView>
 

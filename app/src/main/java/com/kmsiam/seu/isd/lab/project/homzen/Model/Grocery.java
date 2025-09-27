@@ -4,13 +4,12 @@ public class Grocery{
     private int image;
     private String category, type, name, price;
     
-    // No-argument constructor required for Firestore
     public Grocery() {
     }
     
     public Grocery(int image, String category, String type, String name, String price) {
-        this.category = category;
         this.image = image;
+        this.category = category;
         this.type = type;
         this.name = name;
         this.price = price;

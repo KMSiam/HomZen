@@ -280,6 +280,7 @@ public class EditProfileActivity extends AppCompatActivity implements OnMapReady
         String name = etName.getText().toString().trim();
         String phone = etPhone.getText().toString().trim();
         String address = etAddress.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
         
         if (name.isEmpty()) {
             etName.setError("Name is required");
@@ -287,6 +288,7 @@ public class EditProfileActivity extends AppCompatActivity implements OnMapReady
         }
         
         Map<String, Object> userMap = new HashMap<>();
+        userMap.put("email", email);
         userMap.put("name", name);
         userMap.put("phone", phone);
         userMap.put("address", address);
