@@ -26,7 +26,7 @@ import java.util.Objects;
 
 import android.util.Patterns;
 
-public class SignupActivity extends AppCompatActivity {
+public class  SignupActivity extends AppCompatActivity {
 
     TextInputEditText signupName, signupEmail, signup_confirm_password, signupPassword;
     TextView loginRedirectText;
